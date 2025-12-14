@@ -37,7 +37,7 @@ export default function ContactSlide() {
         
         <div className="contact-content">
           <p className="contact-description">
-            I'm always interested in hearing about new opportunities, collaborations, or just having a chat about technology and innovation.
+            I&apos;m always interested in hearing about new opportunities, collaborations, or just having a chat about technology and innovation.
           </p>
           
           <div className="contact-methods">

@@ -28,7 +28,7 @@ export default function HeroSlide({ onNavigate }) {
             </div>
 
             <p className="hero-description">
-              Building scalable VAS solutions & marketplace platforms for Africa's
+              Building scalable VAS solutions & marketplace platforms for Africa&apos;s
               digital future. Currently architecting telecom services at{" "}
               <span className="text-coral-500 font-semibold">Zuri Health</span>,
               supporting 50,000+ monthly healthcare transactions.
@@ -45,7 +45,7 @@ export default function HeroSlide({ onNavigate }) {
 
             <div className="hero-cta">
               <Button variant="primary" onClick={() => onNavigate(4)}>
-                Let's Connect
+                Let&apos;s Connect
               </Button>
               <Button variant="secondary" onClick={() => onNavigate(2)}>
                 View Work
