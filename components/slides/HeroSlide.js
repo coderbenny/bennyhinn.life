@@ -1,4 +1,5 @@
 // app/components/slides/HeroSlide.js
+import React from "react";
 import StatItem from "../ui/StatItem";
 import Button from "../ui/Button";
 
@@ -26,29 +27,24 @@ export default function HeroSlide({ onNavigate }) {
           </div>
 
           <p className="hero-description">
-            Building scalable VAS solutions & marketplace platforms for
-            Africa&apos;s digital future. Currently architecting telecom
-            services at{" "}
+            Building scalable VAS solutions & marketplace platforms for Africa's
+            digital future. Currently architecting telecom services at{" "}
             <span className="text-coral-500 font-semibold">Zuri Health</span>,
             supporting 50,000+ monthly healthcare transactions.
           </p>
 
           <div className="hero-stats">
             {stats.map((stat, idx) => (
-              <>
-                <StatItem
-                  key={stat.label}
-                  number={stat.number}
-                  label={stat.label}
-                />
+              <React.Fragment key={stat.label}>
+                <StatItem index={idx} number={stat.number} label={stat.label} />
                 {idx < stats.length - 1 && <div className="stat-divider" />}
-              </>
+              </React.Fragment>
             ))}
           </div>
 
           <div className="hero-cta">
             <Button variant="primary" onClick={() => onNavigate(4)}>
-              Let&apos;s Connect
+              Let's Connect
             </Button>
             <Button variant="secondary" onClick={() => onNavigate(2)}>
               View Work
