@@ -15,9 +15,26 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const totalSlides = 5;
   const containerRef = useRef(null);
   const lastScrollTime = useRef(0);
+
+  useEffect(() => {
+    // Detect mobile viewport (client-side only)
+    const updateIsMobile = () => {
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth <= 768);
+      }
+    };
+
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -25,6 +42,9 @@ export default function Home() {
     };
 
     const handleWheel = (e) => {
+      // On mobile layouts we rely on natural scroll instead of slide snapping
+      if (isMobile) return;
+
       e.preventDefault();
       const now = Date.now();
       
@@ -59,7 +79,7 @@ export default function Home() {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentSlide, isScrolling]);
+  }, [currentSlide, isScrolling, isMobile]);
 
   return (
     <>
@@ -79,7 +99,7 @@ export default function Home() {
       <div 
         ref={containerRef}
         className="slides-container"
-        style={{ transform: `translateY(-${currentSlide * 100}vh)` }}
+        style={isMobile ? {} : { transform: `translateY(-${currentSlide * 100}vh)` }}
       >
         <HeroSlide onNavigate={setCurrentSlide} />
         <TechStackSlide />

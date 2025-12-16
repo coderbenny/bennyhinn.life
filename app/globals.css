@@ -460,6 +460,7 @@ html {
   transition: all 0.3s ease;
   animation: fadeInUp 0.8s ease backwards;
   min-width: 0; /* Prevent overflow */
+  cursor: pointer;
 }
 
 .project-card:hover {
@@ -801,6 +802,10 @@ html {
     overflow-y: auto; /* Allow scrolling on mobile */
   }
 
+  .slides-container {
+    height: auto; /* Let content define height on mobile */
+  }
+
   .cursor-glow {
     display: none;
   }
@@ -891,6 +896,11 @@ html {
   .contact-methods {
     grid-template-columns: 1fr !important; /* Force single column */
     gap: 1.5rem;
+  }
+
+  /* Extra breathing room for the projects slide on mobile */
+  .projects-grid {
+    margin-bottom: 3rem; /* Ensure last project card is fully visible */
   }
 
   .project-card {

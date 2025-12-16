@@ -28,8 +28,9 @@ export default function HeroSlide({ onNavigate }) {
             </div>
 
             <p className="hero-description">
-              Building scalable VAS solutions & marketplace platforms for Africa&apos;s
-              digital future. Currently architecting telecom services at{" "}
+              Building scalable VAS solutions & marketplace platforms for
+              Africa&apos;s digital future. Currently architecting telecom
+              services at{" "}
               <span className="text-coral-500 font-semibold">Zuri Health</span>,
               supporting 50,000+ monthly healthcare transactions.
             </p>
@@ -37,7 +38,11 @@ export default function HeroSlide({ onNavigate }) {
             <div className="hero-stats">
               {stats.map((stat, idx) => (
                 <React.Fragment key={stat.label}>
-                  <StatItem index={idx} number={stat.number} label={stat.label} />
+                  <StatItem
+                    index={idx}
+                    number={stat.number}
+                    label={stat.label}
+                  />
                   {idx < stats.length - 1 && <div className="stat-divider" />}
                 </React.Fragment>
               ))}
@@ -55,9 +60,9 @@ export default function HeroSlide({ onNavigate }) {
 
           <div className="hero-image-wrapper">
             <div className="hero-image-container">
-              <img 
-                src="/benny-logo.jpeg" 
-                alt="Benny Hinn" 
+              <img
+                src="/benny-logo.jpeg"
+                alt="Benny Hinn"
                 className="hero-image"
               />
             </div>
