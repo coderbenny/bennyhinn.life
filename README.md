@@ -239,7 +239,7 @@ Full Stack Software Engineer | VAS Solutions Developer
 - Phone: +254-114-092-304
 - LinkedIn: [linkedin.com/in/benny-mathew](https://www.linkedin.com/in/benny-mathew)
 - GitHub: [github.com/coderbenny](https://github.com/coderbenny)
-- Portfolio: [benny-eta.vercel.app](https://www.bennyhinn.life)
+- Portfolio: [https://www.bennyhinn.life](https://www.bennyhinn.life)
 
 **Location:** Nairobi, Kenya
 
