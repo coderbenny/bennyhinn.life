@@ -98,6 +98,10 @@ export default function RootLayout({ children }) {
       <head>
         {/* Performance & UX */}
         <meta name="theme-color" content="#020617" />
+        <meta
+          name="google-site-verification"
+          content="TMLXDjwIrq-79d1OYe7uG3lZVOP0rcxDXQYiB1lPo7M"
+        />
         <link rel="icon" href="/favicon.ico" />
 
         {/* Preload critical assets */}
