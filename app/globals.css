@@ -460,6 +460,7 @@ html {
   transition: all 0.3s ease;
   animation: fadeInUp 0.8s ease backwards;
   min-width: 0; /* Prevent overflow */
+  cursor: pointer;
 }
 
 .project-card:hover {
