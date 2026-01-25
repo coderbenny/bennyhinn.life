@@ -1,0 +1,10 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#1a1a1a"/>
+  <rect x="100" y="50" width="600" height="50" rx="10" fill="#2a2a2a"/>
+  <circle cx="50" cy="75" r="15" fill="#ff6b6b"/>
+  <rect x="100" y="150" width="280" height="200" rx="4" fill="#333"/>
+  <rect x="420" y="150" width="280" height="200" rx="4" fill="#333"/>
+  <rect x="100" y="380" width="280" height="200" rx="4" fill="#333"/>
+  <rect x="420" y="380" width="280" height="200" rx="4" fill="#333"/>
+  <text x="400" y="300" font-family="Arial" font-size="40" fill="#555" text-anchor="middle">Gemify Africa</text>
+</svg>
