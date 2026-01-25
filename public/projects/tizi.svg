@@ -1,0 +1,10 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#0f0f0f"/>
+  <rect x="50" y="50" width="150" height="500" rx="10" fill="#222"/>
+  <rect x="250" y="50" width="500" height="300" rx="10" fill="#333"/>
+  <path d="M280 250 L350 200 L420 280 L500 150 L600 220" stroke="#bef264" stroke-width="5" fill="none"/>
+  <circle cx="500" cy="150" r="8" fill="#bef264"/>
+  <rect x="250" y="380" width="230" height="170" rx="10" fill="#222"/>
+  <rect x="520" y="380" width="230" height="170" rx="10" fill="#222"/>
+  <text x="400" y="300" font-family="Arial" font-size="40" fill="#888" text-anchor="middle">Tizi Plus</text>
+</svg>

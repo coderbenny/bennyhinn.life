@@ -1,0 +1,7 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#f0f9ff"/>
+  <rect x="0" y="0" width="800" height="300" fill="#e0f2fe"/>
+  <circle cx="400" cy="150" r="80" fill="#38bdf8"/>
+  <rect x="200" y="350" width="400" height="40" rx="20" fill="#0ea5e9"/>
+  <text x="400" y="500" font-family="Arial" font-size="40" fill="#0284c7" text-anchor="middle">RepairHub</text>
+</svg>

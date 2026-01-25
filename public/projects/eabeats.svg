@@ -1,0 +1,10 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#18181b"/>
+  <rect x="0" y="0" width="800" height="400" fill="#1e1e24"/>
+  <rect x="50" y="50" width="200" height="200" fill="#3f3f46"/>
+  <rect x="280" y="50" width="200" height="200" fill="#3f3f46"/>
+  <rect x="510" y="50" width="200" height="200" fill="#3f3f46"/>
+  <rect x="0" y="450" width="800" height="150" fill="#27272a"/>
+  <path d="M0 525 Q 100 450, 200 525 T 400 525 T 600 525 T 800 525" stroke="#a855f7" stroke-width="4" fill="none"/>
+  <text x="400" y="350" font-family="Arial" font-size="40" fill="#71717a" text-anchor="middle">EABeats</text>
+</svg>
