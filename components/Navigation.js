@@ -3,12 +3,14 @@ export default function Navigation({ currentSlide, onNavigate }) {
   const navItems = ['About', 'Stack', 'Work', 'Experience', 'Contact'];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-      <div className="flex justify-between items-center px-8 py-6">
-        <div className="text-2xl font-bold bg-gradient-to-r from-coral-500 to-amber-500 bg-clip-text text-transparent">
+    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-black/50 backdrop-blur-md border-b border-white/5">
+      <div className="flex justify-between items-center px-6 md:px-8 py-6">
+        <div className="text-2xl font-bold bg-gradient-to-r from-coral-500 to-amber-500 bg-clip-text text-transparent relative z-[60]">
           BH
         </div>
-        <div className="flex gap-8">
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex gap-8">
           {navItems.map((item, idx) => (
             <button
               key={item}
