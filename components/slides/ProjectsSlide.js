@@ -1,10 +1,13 @@
 // app/components/slides/ProjectsSlide.js
-import { useRef } from 'react';
+'use client';
+
+import { useRef, useState, useEffect } from 'react';
 import SectionTitle from "../ui/SectionTitle";
 import ProjectCard from "../ui/ProjectCard";
 
 export default function ProjectsSlide() {
   const containerRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const projects = [
     {
@@ -93,10 +96,39 @@ export default function ProjectsSlide() {
     },
   ];
 
+  // Track scroll position to update pagination dots
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const width = container.offsetWidth;
+      const scrollPos = container.scrollLeft;
+      const index = Math.round(scrollPos / (width * 0.8)); // Adjust multiplier based on card width
+      if (index !== activeIndex && index < projects.length) {
+        setActiveIndex(index);
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [activeIndex, projects.length]);
+
   const scroll = (direction) => {
     if (containerRef.current) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
+      const width = containerRef.current.offsetWidth;
+      const scrollAmount = direction === 'left' ? -width * 0.8 : width * 0.8;
       containerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToProject = (index) => {
+    if (containerRef.current) {
+      const width = containerRef.current.offsetWidth;
+      containerRef.current.scrollTo({
+        left: index * width * 0.8,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -106,7 +138,6 @@ export default function ProjectsSlide() {
         <div className="projects-header">
           <SectionTitle number="02" title="FEATURED PROJECTS" />
           
-          {/* Desktop Navigation */}
           <div className="projects-nav-desktop">
             <button 
               onClick={() => scroll('left')}
@@ -126,9 +157,10 @@ export default function ProjectsSlide() {
         </div>
 
         <div className="projects-carousel-wrapper">
-          {/* Mobile scroll hint */}
           <div className="projects-swipe-hint">
-            <span>Swipe to explore →</span>
+            <span className="swipe-chevron">←</span>
+            <span>Swipe to explore</span>
+            <span className="swipe-chevron">→</span>
           </div>
 
           <div 
@@ -139,6 +171,18 @@ export default function ProjectsSlide() {
               <ProjectCard key={project.name} {...project} delay={idx * 0.1} />
             ))}
             <div className="projects-spacer" />
+          </div>
+
+          {/* Pagination dots for mobile */}
+          <div className="projects-pagination">
+            {projects.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToProject(idx)}
+                className={`pagination-dot ${activeIndex === idx ? 'active' : ''}`}
+                aria-label={`Go to project ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>
