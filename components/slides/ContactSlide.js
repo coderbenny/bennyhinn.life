@@ -31,8 +31,8 @@ export default function ContactSlide() {
   ];
 
   return (
-    <section className="slide">
-      <div className="slide-content">
+    <section id="contact" className="slide overflow-y-auto">
+      <div className="slide-content py-12">
         <SectionTitle number="04" title="LET'S BUILD TOGETHER" />
         
         <div className="contact-content">

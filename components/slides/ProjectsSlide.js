@@ -101,54 +101,44 @@ export default function ProjectsSlide() {
   };
 
   return (
-    <section className="slide cursor-auto">
+    <section id="work" className="slide cursor-auto">
       <div className="slide-content relative">
-        <div className="flex justify-between items-center mb-0 md:mb-8 pr-4">
+        <div className="projects-header">
           <SectionTitle number="02" title="FEATURED PROJECTS" />
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-4">
+          <div className="projects-nav-desktop">
             <button 
               onClick={() => scroll('left')}
-              className="w-12 h-12 rounded-full border border-[#2a2a2a] flex items-center justify-center hover:border-[#ff6b6b] hover:bg-[#ff6b6b] hover:text-white transition-all duration-300 group"
+              className="projects-scroll-btn"
               aria-label="Scroll left"
             >
-              <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
+              <span>←</span>
             </button>
             <button 
               onClick={() => scroll('right')}
-              className="w-12 h-12 rounded-full border border-[#2a2a2a] flex items-center justify-center hover:border-[#ff6b6b] hover:bg-[#ff6b6b] hover:text-white transition-all duration-300 group"
+              className="projects-scroll-btn"
               aria-label="Scroll right"
             >
-              <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+              <span>→</span>
             </button>
           </div>
         </div>
 
-        <div className="relative group">
-          {/* Mobile Navigation Overlays (visible on touch devices slightly) */}
-          <button 
-             onClick={() => scroll('left')}
-             className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/50 backdrop-blur border border-white/10 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
-          >
-            ←
-          </button>
-          <button 
-             onClick={() => scroll('right')}
-             className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/50 backdrop-blur border border-white/10 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            →
-          </button>
+        <div className="projects-carousel-wrapper">
+          {/* Mobile scroll hint */}
+          <div className="projects-swipe-hint">
+            <span>Swipe to explore →</span>
+          </div>
 
           <div 
             ref={containerRef}
-            className="flex overflow-x-auto gap-8 w-full pb-12 pt-4 px-4 snap-x snap-mandatory scrollbar-hide -mx-4 md:mx-0"
+            className="projects-carousel scrollbar-hide"
           >
             {projects.map((project, idx) => (
               <ProjectCard key={project.name} {...project} delay={idx * 0.1} />
             ))}
-            {/* Spacer for last item padding */}
-            <div className="min-w-[1px] h-full" />
+            <div className="projects-spacer" />
           </div>
         </div>
       </div>

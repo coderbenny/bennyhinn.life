@@ -11,7 +11,7 @@ export default function HeroSlide({ onNavigate }) {
   ];
 
   return (
-    <section className="slide">
+    <section id="about" className="slide">
       <div className="slide-content">
         <div className="hero-layout">
           <div className="hero-content">
@@ -39,7 +39,6 @@ export default function HeroSlide({ onNavigate }) {
               {stats.map((stat, idx) => (
                 <React.Fragment key={stat.label}>
                   <StatItem
-                    index={idx}
                     number={stat.number}
                     label={stat.label}
                   />

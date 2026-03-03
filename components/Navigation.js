@@ -1,29 +1,87 @@
 // app/components/Navigation.js
+'use client';
+
+import { useState, useEffect } from 'react';
+
 export default function Navigation({ currentSlide, onNavigate }) {
   const navItems = ['About', 'Stack', 'Work', 'Experience', 'Contact'];
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const handleNavClick = (idx) => {
+    onNavigate(idx);
+    setMenuOpen(false);
+  };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-      <div className="flex justify-between items-center px-8 py-6">
-        <div className="text-2xl font-bold bg-gradient-to-r from-coral-500 to-amber-500 bg-clip-text text-transparent">
-          BH
+    <>
+      <nav className="nav-bar">
+        <div className="nav-inner">
+          <div className="nav-logo">BH</div>
+
+          {/* Desktop links */}
+          <div className="nav-links-desktop">
+            {navItems.map((item, idx) => (
+              <button
+                key={item}
+                onClick={() => handleNavClick(idx)}
+                className={`nav-link ${currentSlide === idx ? 'active' : ''}`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile hamburger button */}
+          <button
+            className="nav-hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+          </button>
         </div>
-        <div className="flex gap-8">
+      </nav>
+
+      {/* Mobile menu overlay */}
+      <div className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`}>
+        <div className="mobile-menu-content">
           {navItems.map((item, idx) => (
             <button
               key={item}
-              onClick={() => onNavigate(idx)}
-              className={`text-sm tracking-wider transition-all duration-300 ${
-                currentSlide === idx 
-                  ? 'text-coral-500 font-semibold' 
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
+              onClick={() => handleNavClick(idx)}
+              className={`mobile-menu-link ${currentSlide === idx ? 'active' : ''}`}
+              style={{ animationDelay: menuOpen ? `${idx * 0.08}s` : '0s' }}
             >
-              {item}
+              <span className="mobile-menu-number">0{idx + 1}</span>
+              <span className="mobile-menu-text">{item}</span>
             </button>
           ))}
         </div>
       </div>
-    </nav>
+    </>
   );
 }

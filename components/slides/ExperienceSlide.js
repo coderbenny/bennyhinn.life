@@ -30,8 +30,8 @@ export default function ExperienceSlide() {
   ];
 
   return (
-    <section className="slide">
-      <div className="slide-content">
+    <section id="experience" className="slide overflow-y-auto">
+      <div className="slide-content py-12">
         <SectionTitle number="03" title="PROFESSIONAL JOURNEY" />
         
         <div className="timeline">

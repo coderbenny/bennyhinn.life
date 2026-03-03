@@ -9,7 +9,7 @@ export default function ContactMethod({ icon, label, value, href, delay }) {
       style={{ animationDelay: `${delay}s` }}
     >
       <span className="contact-icon">{icon}</span>
-      <div>
+      <div className="contact-info">
         <p className="contact-label">{label}</p>
         <p className="contact-value">{value}</p>
       </div>

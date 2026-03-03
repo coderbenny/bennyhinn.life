@@ -18,6 +18,15 @@ const geistMono = localFont({
 });
 
 /* =========================
+   Viewport (Mobile First)
+========================= */
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+/* =========================
    SEO Metadata (2025 Ready)
 ========================= */
 export const metadata = {
