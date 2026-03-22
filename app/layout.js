@@ -121,6 +121,7 @@ export default function RootLayout({ children }) {
           type="font/woff"
           crossOrigin="anonymous"
         />
+        <meta name="google-adsense-account" content="ca-pub-4090506137434256"></meta>
       </head>
 
       <body className="antialiased bg-[#020617] text-slate-100">
