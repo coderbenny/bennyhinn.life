@@ -1,7 +1,7 @@
 // app/components/slides/ProjectsSlide.js
-'use client';
+"use client";
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from "react";
 import SectionTitle from "../ui/SectionTitle";
 import ProjectCard from "../ui/ProjectCard";
 
@@ -11,6 +11,23 @@ export default function ProjectsSlide() {
 
   const projects = [
     {
+      name: "SmartMinds",
+      url: "https://www.smartminds.life",
+      description:
+        "High-performance financial ecosystem digitizing Kenyan savings circles (Chamas) with automated Merry-Go-Round rotations, P2P lending, and MMF yield optimization.",
+      tech: [
+        "Next.js 14",
+        "TailwindCSS",
+        "Flask",
+        "Redis & Celery",
+        "MySQL",
+        "M-PESA / Paystack",
+        "JWT Auth",
+      ],
+      impact: "Managing 30+ active Chamas, 99.9% automated ledger accuracy",
+      image: "/projects/smartminds.png",
+    },
+    {
       name: "Errands By Us",
       url: "https://www.errandsbyus.co.ke",
       description:
@@ -19,13 +36,13 @@ export default function ProjectsSlide() {
         "Next.js",
         "TailwindCSS",
         "Flask",
-        "Payment Intergration",
+        "Payment Integration",
         "JWT Auth",
         "MySQL",
         "GCP",
       ],
       impact: "500+ successful errands, 98% client satisfaction",
-      image: "/projects/errands.png"
+      image: "/projects/errands.png",
     },
     {
       name: "Gemify Africa",
@@ -36,13 +53,13 @@ export default function ProjectsSlide() {
         "Next.js",
         "TailwindCSS",
         "Flask",
-        "Payment Intergration",
+        "Payment Integration",
         "JWT Auth",
         "MySQL",
         "GCP",
       ],
       impact: "200+ active listings, real-time booking system",
-      image: "/projects/gemify.png"
+      image: "/projects/gemify.png",
     },
     {
       name: "Repairhub",
@@ -53,13 +70,13 @@ export default function ProjectsSlide() {
         "Next.js",
         "TailwindCSS",
         "Flask",
-        "Payment Intergration",
+        "Payment Integration",
         "JWT Auth",
         "MySQL",
         "GCP",
       ],
       impact: "Real-time job matching, rating system",
-      image: "/projects/repairhub.png"
+      image: "/projects/repairhub.png",
     },
     {
       name: "Tizi Plus Kenya",
@@ -69,13 +86,13 @@ export default function ProjectsSlide() {
         "Next.js",
         "TailwindCSS",
         "Flask",
-        "Payment Intergration",
+        "Payment Integration",
         "JWT Auth",
         "MySQL",
         "GCP",
       ],
       impact: "Full gym/client management system",
-      image: "/projects/tizi.png"
+      image: "/projects/tizi.png",
     },
     {
       name: "EABeats Official",
@@ -86,13 +103,13 @@ export default function ProjectsSlide() {
         "Next.js",
         "TailwindCSS",
         "Flask",
-        "Payment Intergration",
+        "Payment Integration",
         "JWT Auth",
         "MYSQL",
         "GCP",
       ],
       impact: "1,000+ daily transactions handled",
-      image: "/projects/eabeats.png"
+      image: "/projects/eabeats.png",
     },
   ];
 
@@ -110,15 +127,15 @@ export default function ProjectsSlide() {
       }
     };
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [activeIndex, projects.length]);
 
   const scroll = (direction) => {
     if (containerRef.current) {
       const width = containerRef.current.offsetWidth;
-      const scrollAmount = direction === 'left' ? -width * 0.8 : width * 0.8;
-      containerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      const scrollAmount = direction === "left" ? -width * 0.8 : width * 0.8;
+      containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -127,7 +144,7 @@ export default function ProjectsSlide() {
       const width = containerRef.current.offsetWidth;
       containerRef.current.scrollTo({
         left: index * width * 0.8,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -137,17 +154,17 @@ export default function ProjectsSlide() {
       <div className="slide-content relative">
         <div className="projects-header">
           <SectionTitle number="02" title="FEATURED PROJECTS" />
-          
+
           <div className="projects-nav-desktop">
-            <button 
-              onClick={() => scroll('left')}
+            <button
+              onClick={() => scroll("left")}
               className="projects-scroll-btn"
               aria-label="Scroll left"
             >
               <span>←</span>
             </button>
-            <button 
-              onClick={() => scroll('right')}
+            <button
+              onClick={() => scroll("right")}
               className="projects-scroll-btn"
               aria-label="Scroll right"
             >
@@ -163,10 +180,7 @@ export default function ProjectsSlide() {
             <span className="swipe-chevron">→</span>
           </div>
 
-          <div 
-            ref={containerRef}
-            className="projects-carousel scrollbar-hide"
-          >
+          <div ref={containerRef} className="projects-carousel scrollbar-hide">
             {projects.map((project, idx) => (
               <ProjectCard key={project.name} {...project} delay={idx * 0.1} />
             ))}
@@ -179,7 +193,7 @@ export default function ProjectsSlide() {
               <button
                 key={idx}
                 onClick={() => scrollToProject(idx)}
-                className={`pagination-dot ${activeIndex === idx ? 'active' : ''}`}
+                className={`pagination-dot ${activeIndex === idx ? "active" : ""}`}
                 aria-label={`Go to project ${idx + 1}`}
               />
             ))}
