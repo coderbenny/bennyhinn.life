@@ -3,115 +3,15 @@
 
 import { useRef, useState, useEffect } from "react";
 import SectionTitle from "../ui/SectionTitle";
+import { PROJECTS } from "../../constants/projects";
 import ProjectCard from "../ui/ProjectCard";
 
 export default function ProjectsSlide() {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const projects = [
-    {
-      name: "SmartMinds",
-      url: "https://www.smartminds.life",
-      description:
-        "High-performance financial ecosystem digitizing Kenyan savings circles (Chamas) with automated Merry-Go-Round rotations, P2P lending, and MMF yield optimization.",
-      tech: [
-        "Next.js 14",
-        "TailwindCSS",
-        "Flask",
-        "Redis & Celery",
-        "MySQL",
-        "M-PESA / Paystack",
-        "JWT Auth",
-      ],
-      impact: "Managing 30+ active Chamas, 99.9% automated ledger accuracy",
-      image: "/projects/smartminds.png",
-    },
-    {
-      name: "Errands By Us",
-      url: "https://www.errandsbyus.co.ke",
-      description:
-        "Focus on what matters most while we handle your errands. Kenya's most trusted errand agency.",
-      tech: [
-        "Next.js",
-        "TailwindCSS",
-        "Flask",
-        "Payment Integration",
-        "JWT Auth",
-        "MySQL",
-        "GCP",
-      ],
-      impact: "500+ successful errands, 98% client satisfaction",
-      image: "/projects/errands.png",
-    },
-    {
-      name: "Gemify Africa",
-      url: "https://www.gemify.africa",
-      description:
-        "Discovery & booking platform connecting 50+ unique venues across Africa",
-      tech: [
-        "Next.js",
-        "TailwindCSS",
-        "Flask",
-        "Payment Integration",
-        "JWT Auth",
-        "MySQL",
-        "GCP",
-      ],
-      impact: "200+ active listings, real-time booking system",
-      image: "/projects/gemify.png",
-    },
-    {
-      name: "Repairhub",
-      url: "https://www.repairhub.co.ke",
-      description:
-        "Two-sided marketplace connecting clients with electronics technicians",
-      tech: [
-        "Next.js",
-        "TailwindCSS",
-        "Flask",
-        "Payment Integration",
-        "JWT Auth",
-        "MySQL",
-        "GCP",
-      ],
-      impact: "Real-time job matching, rating system",
-      image: "/projects/repairhub.png",
-    },
-    {
-      name: "Tizi Plus Kenya",
-      url: "https://www.tiziplus.ke",
-      description: "Fitness tracking platform with subscription management",
-      tech: [
-        "Next.js",
-        "TailwindCSS",
-        "Flask",
-        "Payment Integration",
-        "JWT Auth",
-        "MySQL",
-        "GCP",
-      ],
-      impact: "Full gym/client management system",
-      image: "/projects/tizi.png",
-    },
-    {
-      name: "EABeats Official",
-      url: "https://www.eabeatsofficial.co.ke",
-      description:
-        "Website for Music Producers to sell beats. Music lovers are also able to sign up, listen to and purchase their favorite beats.",
-      tech: [
-        "Next.js",
-        "TailwindCSS",
-        "Flask",
-        "Payment Integration",
-        "JWT Auth",
-        "MYSQL",
-        "GCP",
-      ],
-      impact: "1,000+ daily transactions handled",
-      image: "/projects/eabeats.png",
-    },
-  ];
+  const projects = PROJECTS;
+
 
   // Track scroll position to update pagination dots
   useEffect(() => {

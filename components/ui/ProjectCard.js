@@ -1,8 +1,8 @@
 // app/components/ui/ProjectCard.js
-export default function ProjectCard({ name, url, description, tech, impact, delay, image }) {
+export default function ProjectCard({ name, url, description, tech, impact, delay, image, category, featured }) {
   return (
     <div 
-      className="project-card"
+      className={`project-card ${featured ? 'featured' : ''}`}
       style={{ animationDelay: `${delay}s`, boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}
     >
       {/* Image Container */}
@@ -15,6 +15,13 @@ export default function ProjectCard({ name, url, description, tech, impact, dela
           loading="lazy"
         />
         
+        {/* Category Badge */}
+        {category && (
+          <div className="project-category-badge">
+            {category}
+          </div>
+        )}
+
         {/* External Link Button */}
         <a 
           href={url} 
@@ -32,6 +39,7 @@ export default function ProjectCard({ name, url, description, tech, impact, dela
         <div className="project-card-info">
           <h3 className="project-name">
             {name}
+            {featured && <span className="featured-dot" title="Featured Project" />}
           </h3>
           <p className="project-description">
             {description}
@@ -43,7 +51,7 @@ export default function ProjectCard({ name, url, description, tech, impact, dela
             {impact}
           </p>
           <div className="project-tech-tags">
-            {tech.map(t => (
+            {tech.slice(0, 5).map(t => (
               <span 
                 key={t} 
                 className="project-tech-tag"
@@ -51,6 +59,7 @@ export default function ProjectCard({ name, url, description, tech, impact, dela
                 {t}
               </span>
             ))}
+            {tech.length > 5 && <span className="project-tech-tag">+ {tech.length - 5} more</span>}
           </div>
         </div>
       </div>

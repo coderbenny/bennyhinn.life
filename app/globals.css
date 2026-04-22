@@ -1779,3 +1779,43 @@ a:focus-visible {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+/* =============================
+   Project Card Enhancements
+============================= */
+.project-category-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.featured-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--coral-500);
+  border-radius: 50%;
+  margin-left: 0.75rem;
+  box-shadow: 0 0 10px var(--coral-500);
+  vertical-align: middle;
+}
+
+.project-card.featured {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(20, 20, 20, 0.8) 100%);
+}
+
+.project-card.featured:hover {
+  border-color: var(--coral-500);
+}
