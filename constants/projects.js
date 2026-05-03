@@ -1,10 +1,10 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
-    name: "Nexara",
-    url: "https://nexara.errandsbyus.co.ke",
+    name: "TabMemory",
+    url: "https://tabamemory.smartminds.life",
     description:
-      "Nexara is Kenya's leading industrial document orchestration platform. We provide high-precision printing, smart digitization/scanning and professional binding services with secure, hub-and-spoke logistics.",
+      "The accountability-first tab manager for knowledge workers, devs and just any other person. Convert digital clutter into actionable intelligence with TabMemory.",
     tech: [
       "Next.js 16",
       "TailwindCSS",
@@ -14,10 +14,11 @@ export const PROJECTS = [
       "M-PESA / Paystack",
       "JWT Auth",
     ],
-    impact: "Processing 10,000+ document deliveries, 99.9% fulfillment accuracy",
-    image: "/projects/nexara.png",
-    category: "Industrial Logistics",
-    featured: true
+    impact:
+      "Processing 1000+ memories, 99.9% fulfillment accuracy",
+    image: "/projects/tabmemory.png",
+    category: "Workflow & Planning",
+    featured: true,
   },
   {
     name: "SmartMinds",
@@ -35,7 +36,7 @@ export const PROJECTS = [
     ],
     impact: "Managing 30+ active Chamas, 99.9% automated ledger accuracy",
     image: "/projects/smartminds.png",
-    category: "FinTech"
+    category: "FinTech",
   },
   {
     name: "Errands By Us",
@@ -53,7 +54,7 @@ export const PROJECTS = [
     ],
     impact: "500+ successful errands, 98% client satisfaction",
     image: "/projects/errands.png",
-    category: "Logistics"
+    category: "Logistics",
   },
   {
     name: "Gemify Africa",
@@ -71,7 +72,7 @@ export const PROJECTS = [
     ],
     impact: "200+ active listings, real-time booking system",
     image: "/projects/gemify.png",
-    category: "Marketplace"
+    category: "Marketplace",
   },
   {
     name: "Repairhub",
@@ -89,7 +90,7 @@ export const PROJECTS = [
     ],
     impact: "Real-time job matching, rating system",
     image: "/projects/repairhub.png",
-    category: "Marketplace"
+    category: "Marketplace",
   },
   {
     name: "Tizi Plus Kenya",
@@ -106,7 +107,7 @@ export const PROJECTS = [
     ],
     impact: "Full gym/client management system",
     image: "/projects/tizi.png",
-    category: "Health & Fitness"
+    category: "Health & Fitness",
   },
   {
     name: "EABeats Official",
@@ -124,6 +125,6 @@ export const PROJECTS = [
     ],
     impact: "1,000+ daily transactions handled",
     image: "/projects/eabeats.png",
-    category: "E-Commerce"
-  }
+    category: "E-Commerce",
+  },
 ];

@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 export default function HeroSlide({ onNavigate }) {
   const stats = [
     { number: "10+", label: "Production Apps" },
-    { number: "2+", label: "Years Experience" },
+    { number: "3+", label: "Years Experience" },
     { number: "99.5%", label: "Uptime Achieved" },
   ];
 
@@ -38,10 +38,7 @@ export default function HeroSlide({ onNavigate }) {
             <div className="hero-stats">
               {stats.map((stat, idx) => (
                 <React.Fragment key={stat.label}>
-                  <StatItem
-                    number={stat.number}
-                    label={stat.label}
-                  />
+                  <StatItem number={stat.number} label={stat.label} />
                   {idx < stats.length - 1 && <div className="stat-divider" />}
                 </React.Fragment>
               ))}
