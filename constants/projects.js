@@ -2,7 +2,7 @@
 export const PROJECTS = [
   {
     name: "TabMemory",
-    url: "https://tabamemory.smartminds.life",
+    url: "https://tabmemory.smartminds.life",
     description:
       "The accountability-first tab manager for knowledge workers, devs and just any other person. Convert digital clutter into actionable intelligence with TabMemory.",
     tech: [
