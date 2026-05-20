@@ -57,24 +57,6 @@ export const PROJECTS = [
     category: "Logistics",
   },
   {
-    name: "Gemify Africa",
-    url: "https://www.gemify.africa",
-    description:
-      "Discovery & booking platform connecting 50+ unique venues across Africa",
-    tech: [
-      "Next.js 16",
-      "TailwindCSS",
-      "Flask",
-      "Payment Integration",
-      "JWT Auth",
-      "MySQL",
-      "GCP",
-    ],
-    impact: "200+ active listings, real-time booking system",
-    image: "/projects/gemify.png",
-    category: "Marketplace",
-  },
-  {
     name: "Repairhub",
     url: "https://www.repairhub.co.ke",
     description:
@@ -126,5 +108,23 @@ export const PROJECTS = [
     impact: "1,000+ daily transactions handled",
     image: "/projects/eabeats.png",
     category: "E-Commerce",
+  },
+  {
+    name: "Gemify Africa",
+    url: "https://www.gemify.africa",
+    description:
+      "Discovery & booking platform connecting 50+ unique venues across Africa",
+    tech: [
+      "Next.js 16",
+      "TailwindCSS",
+      "Flask",
+      "Payment Integration",
+      "JWT Auth",
+      "MySQL",
+      "GCP",
+    ],
+    impact: "200+ active listings, real-time booking system",
+    image: "/projects/gemify.png",
+    category: "Marketplace",
   },
 ];
