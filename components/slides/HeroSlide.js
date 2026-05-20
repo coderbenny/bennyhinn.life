@@ -29,9 +29,9 @@ export default function HeroSlide({ onNavigate }) {
             </div>
 
             <p className="hero-description">
-              Building scalable VAS solutions & marketplace platforms for
-              Africa&apos;s digital future. Currently architecting telecom
-              services at{" "}
+              Building scalable VAS solutions, AI-powered applications and marketplace
+              platforms for Africa&apos;s digital future. Currently architecting telecom
+              services and integrating LLM workflows at{" "}
               <span className="text-coral-500 font-semibold">Zuri Health</span>,
               supporting 50,000+ monthly healthcare transactions.
             </p>
