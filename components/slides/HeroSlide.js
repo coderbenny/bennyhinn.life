@@ -24,7 +24,7 @@ export default function HeroSlide({ onNavigate }) {
             </div>
 
             <div className="hero-subtitle-wrapper">
-              <h2 className="hero-subtitle"> & AI Engineer</h2>
+              <h2 className="hero-subtitle">Full Stack & AI Engineer</h2>
               <div className="hero-accent-line" />
             </div>
 
