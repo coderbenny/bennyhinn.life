@@ -2,6 +2,7 @@
 import React from "react";
 import StatItem from "../ui/StatItem";
 import Button from "../ui/Button";
+import TerminalBlock from "../ui/TerminalBlock";
 
 export default function HeroSlide({ onNavigate }) {
   const stats = [
@@ -55,13 +56,7 @@ export default function HeroSlide({ onNavigate }) {
           </div>
 
           <div className="hero-image-wrapper">
-            <div className="hero-image-container">
-              <img
-                src="/benny-logo.jpeg"
-                alt="Benny Hinn"
-                className="hero-image"
-              />
-            </div>
+            <TerminalBlock />
           </div>
         </div>
       </div>
