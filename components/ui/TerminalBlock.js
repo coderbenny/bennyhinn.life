@@ -68,7 +68,7 @@ const CODE_LINES = [
   [
     { text: '  focus', cls: 'tk-prop' },
     { text: ': ', cls: 'tk-punct' },
-    { text: '"VAS & Telecom"', cls: 'tk-string' },
+    { text: '"Full Stack × AI × Telecom"', cls: 'tk-string' },
     { text: ',', cls: 'tk-punct' },
   ],
   [
