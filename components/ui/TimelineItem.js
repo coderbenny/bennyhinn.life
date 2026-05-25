@@ -1,7 +1,7 @@
 // app/components/ui/TimelineItem.js
 export default function TimelineItem({ title, period, company, achievements, current, delay }) {
   return (
-    <div 
+    <article 
       className="timeline-item"
       style={{ animationDelay: `${delay}s` }}
     >
@@ -18,6 +18,6 @@ export default function TimelineItem({ title, period, company, achievements, cur
           ))}
         </ul>
       </div>
-    </div>
+    </article>
   );
 }

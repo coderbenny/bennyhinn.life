@@ -18,9 +18,9 @@ export default function HeroSlide({ onNavigate }) {
           <div className="hero-content">
             <div className="glitch-wrapper">
               <h1 className="hero-title">BENNY HINN</h1>
-              <h1 className="hero-title glitch-text" data-text="BENNY HINN">
+              <span className="hero-title glitch-text" aria-hidden="true" data-text="BENNY HINN">
                 BENNY HINN
-              </h1>
+              </span>
             </div>
 
             <div className="hero-subtitle-wrapper">

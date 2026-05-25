@@ -1,7 +1,7 @@
 // app/components/ui/ProjectCard.js
 export default function ProjectCard({ name, url, description, tech, impact, delay, image, category, featured }) {
   return (
-    <div 
+    <article 
       className={`project-card ${featured ? 'featured' : ''}`}
       style={{ animationDelay: `${delay}s`, boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}
     >
@@ -63,6 +63,6 @@ export default function ProjectCard({ name, url, description, tech, impact, dela
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
