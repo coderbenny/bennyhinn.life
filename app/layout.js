@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import GlobalCursor from "@/components/GlobalCursor";
 
 /* =========================
    Fonts (Performance First)
@@ -125,6 +126,7 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="antialiased bg-[#020617] text-slate-100">
+        <GlobalCursor />
         {/* Semantic landmark for SEO */}
         <main id="main-content">{children}</main>
       </body>

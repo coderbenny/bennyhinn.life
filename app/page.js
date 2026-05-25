@@ -4,7 +4,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
 import SlideIndicators from '@/components/SlideIndicators';
-import CursorGlow from '@/components/CursorGlow';
 import HeroSlide from '@/components/slides/HeroSlide';
 import TechStackSlide from '@/components/slides/TechStackSlide';
 import ProjectsSlide from '@/components/slides/ProjectsSlide';
@@ -14,7 +13,6 @@ import ContactSlide from '@/components/slides/ContactSlide';
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const totalSlides = 5;
   const containerRef = useRef(null);
@@ -88,10 +86,6 @@ export default function Home() {
   }, [isMobile, currentSlide, slideIds]);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
     const handleWheel = (e) => {
       if (isMobile) return;
 
@@ -147,14 +141,12 @@ export default function Home() {
       setTimeout(() => setIsScrolling(false), 1000);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('touchstart', handleTouchStart);
@@ -164,8 +156,6 @@ export default function Home() {
 
   return (
     <>
-      <CursorGlow position={mousePosition} />
-      
       <Navigation 
         currentSlide={currentSlide} 
         onNavigate={handleNavigate} 

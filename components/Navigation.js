@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Navigation({ currentSlide, onNavigate }) {
   const navItems = ['About', 'Stack', 'Work', 'Experience', 'Contact'];
@@ -50,6 +51,9 @@ export default function Navigation({ currentSlide, onNavigate }) {
                 {item}
               </button>
             ))}
+            <Link href="/blog" className="nav-link">
+              Blog
+            </Link>
           </div>
 
           {/* Mobile hamburger button */}
@@ -80,6 +84,14 @@ export default function Navigation({ currentSlide, onNavigate }) {
               <span className="mobile-menu-text">{item}</span>
             </button>
           ))}
+          <Link
+            href="/blog"
+            className="mobile-menu-link"
+            style={{ animationDelay: menuOpen ? `${navItems.length * 0.08}s` : '0s' }}
+          >
+            <span className="mobile-menu-number">0{navItems.length + 1}</span>
+            <span className="mobile-menu-text">Blog</span>
+          </Link>
         </div>
       </div>
     </>
