@@ -1,6 +1,23 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
+    name: "Blueprint — Project Portal",
+    url: "https://studio.bennyhinn.life",
+    description: "A full-stack client project management platform. Built to bring radical transparency and elegance to the studio-client relationship.",
+    tech: [
+      "Next.js",
+      "TailwindCSS",
+      "Flask",
+      "PostgreSQL",
+      "Redis",
+      "Redux Toolkit"
+    ],
+    impact: "Built for: studio.bennyhinn.life",
+    image: "/projects/blueprint.png",
+    category: "Workflow & Planning",
+    featured: true,
+  },
+  {
     name: "TabMemory",
     url: "https://tabmemory.smartminds.life",
     description:

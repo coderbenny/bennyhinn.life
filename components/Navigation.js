@@ -54,6 +54,9 @@ export default function Navigation({ currentSlide, onNavigate }) {
             <Link href="/blog" className="nav-link">
               Blog
             </Link>
+            <a href="https://studio.bennyhinn.life" target="_blank" rel="noopener noreferrer" className="nav-link ml-4 px-3 py-1.5 rounded-full border border-coral-500/30 text-coral-500 hover:bg-coral-500 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium">
+              Studio <span className="text-[10px]">↗</span>
+            </a>
           </div>
 
           {/* Mobile hamburger button */}
@@ -92,6 +95,16 @@ export default function Navigation({ currentSlide, onNavigate }) {
             <span className="mobile-menu-number">0{navItems.length + 1}</span>
             <span className="mobile-menu-text">Blog</span>
           </Link>
+          <a
+            href="https://studio.bennyhinn.life"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mobile-menu-link text-coral-500"
+            style={{ animationDelay: menuOpen ? `${(navItems.length + 1) * 0.08}s` : '0s' }}
+          >
+            <span className="mobile-menu-number">0{navItems.length + 2}</span>
+            <span className="mobile-menu-text">Studio ↗</span>
+          </a>
         </div>
       </div>
     </>
