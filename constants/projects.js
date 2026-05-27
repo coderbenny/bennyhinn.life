@@ -3,17 +3,18 @@ export const PROJECTS = [
   {
     name: "Blueprint — Project Portal",
     url: "https://studio.bennyhinn.life",
-    description: "A full-stack client project management platform. Built to bring radical transparency and elegance to the studio-client relationship.",
+    description:
+      "A full-stack client project management platform. Built to bring radical transparency and elegance to the studio-client relationship.",
     tech: [
       "Next.js",
       "TailwindCSS",
       "Flask",
       "PostgreSQL",
       "Redis",
-      "Redux Toolkit"
+      "Redux Toolkit",
     ],
     impact: "Built for: studio.bennyhinn.life",
-    image: "/projects/blueprint.png",
+    image: "/projects/studio.png",
     category: "Workflow & Planning",
     featured: true,
   },
@@ -31,8 +32,7 @@ export const PROJECTS = [
       "M-PESA / Paystack",
       "JWT Auth",
     ],
-    impact:
-      "Processing 1000+ memories, 99.9% fulfillment accuracy",
+    impact: "Processing 1000+ memories, 99.9% fulfillment accuracy",
     image: "/projects/tabmemory.png",
     category: "Workflow & Planning",
     featured: true,
