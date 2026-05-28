@@ -1,7 +1,7 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
-    name: "Blueprint — Project Portal",
+    name: "My Studio — Clients Project Portal",
     url: "https://studio.bennyhinn.life",
     description:
       "A full-stack client project management platform. Built to bring radical transparency and elegance to the studio-client relationship.",
