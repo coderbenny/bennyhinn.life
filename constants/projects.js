@@ -1,7 +1,28 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
-    name: "My Studio — Clients Project Portal",
+    name: "Snapit - Universal Clipboard Vault",
+    url: "https://www.snapit.ink",
+    description:
+      "Local-first clipboard manager with unlimited history, tagging, search, and quick-paste hotkeys. Syncs encrypted across desktop and mobile via an optional self-hosted or cloud backend. Freemium: free forever on desktop, Pro unlocks cross-device sync.",
+    tech: [
+      "Flutter Desktop",
+      "Flutter Mobile",
+      "Next.js",
+      "Flask",
+      "MySQL",
+      "Redis",
+      "SQLite",
+      "AES-256-GCM",
+    ],
+    impact:
+      "Free tier: unlimited local history. Pro: encrypted cross-device sync",
+    image: "/projects/snap.png",
+    category: "Productivity",
+    featured: true,
+  },
+  {
+    name: "My Studio - Clients Project Portal",
     url: "https://studio.bennyhinn.life",
     description:
       "A full-stack client project management platform. Built to bring radical transparency and elegance to the studio-client relationship.",
