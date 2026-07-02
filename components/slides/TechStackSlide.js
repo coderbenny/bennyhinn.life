@@ -7,6 +7,7 @@ export default function TechStackSlide() {
   const techStack = {
     Frontend: ['React.js', 'Next.js 14+', 'TypeScript', 'TailwindCSS'],
     Backend: ['Python', 'Flask', 'Django', 'Node.js'],
+    Mobile: ['Flutter', 'Dart'],
     Database: ['PostgreSQL', 'MySQL', 'MongoDB'],
     DevOps: ['Docker', 'GCP', 'Firebase', 'CI/CD'],
     Telecom: ['SMS Gateway', 'MMS', 'IVR', 'USSD']

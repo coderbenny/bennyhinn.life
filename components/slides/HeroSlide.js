@@ -7,7 +7,7 @@ import TerminalBlock from "../ui/TerminalBlock";
 export default function HeroSlide({ onNavigate }) {
   const stats = [
     { number: "10+", label: "Production Apps" },
-    { number: "3+", label: "Years Experience" },
+    { number: "4+", label: "Years Experience" },
     { number: "99.5%", label: "Uptime Achieved" },
   ];
 
