@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# Mediapartners-Google
+User-agent: Mediapartners-Google
+Allow: /
+
+# Host
+Host: https://bennyhinn.life
+
+# Sitemaps
+Sitemap: https://bennyhinn.life/sitemap.xml
