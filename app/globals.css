@@ -2067,3 +2067,181 @@ a:focus-visible {
   border-radius: 8px;
   margin: 2rem 0;
 }
+
+/* =============================
+   Contact Form
+============================= */
+.contact-form {
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 0.8s ease 0.5s backwards;
+}
+
+.contact-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.contact-input {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.875rem 1.25rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.contact-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.contact-input:focus {
+  border-color: var(--coral-500);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.contact-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contact-textarea {
+  resize: vertical;
+  min-height: 120px;
+  margin-bottom: 1rem;
+}
+
+.contact-form-footer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.contact-form-footer .btn-base:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.contact-feedback {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.contact-feedback--success { color: #27c93f; }
+.contact-feedback--error   { color: var(--coral-500); }
+
+/* =============================
+   WhatsApp Floating Button
+============================= */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 45;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+  pointer-events: none;
+}
+
+.whatsapp-btn--visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.whatsapp-btn::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 211, 102, 0.5);
+  animation: wa-pulse 2.5s ease-out infinite;
+}
+
+@keyframes wa-pulse {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.whatsapp-btn:hover {
+  box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+  transform: scale(1.1);
+}
+
+.whatsapp-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.whatsapp-btn:hover .whatsapp-tooltip {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .contact-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .whatsapp-btn {
+    bottom: 1.5rem;
+    right: 1.25rem;
+    width: 50px;
+    height: 50px;
+  }
+
+  .whatsapp-tooltip {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-form-footer .btn-base {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-btn::before {
+    animation: none;
+  }
+}

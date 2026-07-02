@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import GlobalCursor from "@/components/GlobalCursor";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 /* =========================
    Fonts (Performance First)
@@ -127,6 +128,7 @@ export default function RootLayout({ children }) {
 
       <body className="antialiased bg-[#020617] text-slate-100">
         <GlobalCursor />
+        <WhatsAppButton />
         {/* Semantic landmark for SEO */}
         <main id="main-content">{children}</main>
       </body>
