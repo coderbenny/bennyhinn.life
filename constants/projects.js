@@ -2,7 +2,7 @@
 export const PROJECTS = [
   {
     name: "Snapit - Universal Clipboard Vault",
-    url: "https://www.snapit.ink",
+    url: "https://snapit.ink",
     description:
       "Local-first clipboard manager with unlimited history, tagging, search, and quick-paste hotkeys. Syncs encrypted across desktop and mobile via an optional self-hosted or cloud backend. Freemium: free forever on desktop, Pro unlocks cross-device sync.",
     tech: [
