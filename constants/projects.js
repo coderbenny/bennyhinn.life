@@ -1,6 +1,26 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
+    name: "Portway - Developer Tunneling Platform",
+    url: "https://portway.online",
+    description:
+      "A self-hosted ngrok alternative that exposes local servers to the public internet over secure tunnels with custom subdomains. A FastAPI control plane provisions projects and tunnels, a Go relay moves the bytes, and a Next.js dashboard offers live tunnel status and a real-time request inspector over WebSockets. Freemium with Paystack billing and per-plan tunnel and bandwidth limits.",
+    tech: [
+      "FastAPI",
+      "Go Relay",
+      "Next.js",
+      "MySQL",
+      "Redis & RQ",
+      "Paystack",
+      "JWT Auth",
+      "Docker Compose",
+    ],
+    impact: "Free: 3 tunnels. Pro: 50 tunnels with encrypted HTTPS/TCP/UDP",
+    image: "/projects/portway.png",
+    category: "Developer Tools",
+    featured: true,
+  },
+  {
     name: "Snapit - Universal Clipboard Vault",
     url: "https://snapit.ink",
     description:
