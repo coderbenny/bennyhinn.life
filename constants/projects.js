@@ -1,7 +1,7 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
-    name: "GenzMarket - Gen-Z Fashion Marketplace",
+    name: "GenzMall - Gen-Z Fashion Marketplace",
     url: "https://genzmall.store",
     description:
       "A multi-vendor fashion marketplace built for Gen-Z shoppers in Kenya. Vendors get a self-service hub to list products, upload media to Cloudflare R2, manage inventory and track orders, while shoppers browse curated drops, filter by vibe, pay securely with Paystack and earn loyalty points. A Flask API handles auth, payments, purchase-verified reviews and real-time web-push notifications, with Celery and Redis powering async email, receipts and order tracking.",
@@ -19,7 +19,7 @@ export const PROJECTS = [
     ],
     impact:
       "Multi-vendor hub, Paystack checkout, loyalty points and web-push alerts",
-    image: "/projects/genzmarket.png",
+    image: "/projects/genzmall.png",
     category: "E-Commerce",
     featured: true,
   },
