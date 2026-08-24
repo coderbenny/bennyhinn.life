@@ -2,6 +2,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import GlobalCursor from "@/components/GlobalCursor";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import Footer from "@/components/Footer";
+import Script from "next/script";
 
 /* =========================
    Fonts (Performance First)
@@ -68,7 +70,7 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: "https://bennyhinn.life",
+    canonical: "/",
   },
 
   openGraph: {
@@ -115,7 +117,7 @@ export default function RootLayout({ children }) {
         />
         <link rel="icon" href="/favicon.ico" />
 
-        <meta name="google-adsense-account" content="ca-pub-4090506137434256"></meta>
+        <meta name="google-adsense-account" content="ca-pub-4090506137434256" />
       </head>
 
       <body className="antialiased bg-[#020617] text-slate-100">
@@ -123,6 +125,15 @@ export default function RootLayout({ children }) {
         <WhatsAppButton />
         {/* Semantic landmark for SEO */}
         <main id="main-content">{children}</main>
+        <Footer />
+
+        {/* Google AdSense — loaded after hydration so it never blocks LCP */}
+        <Script
+          id="adsbygoogle-init"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4090506137434256"
+        />
       </body>
     </html>
   );

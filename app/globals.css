@@ -2245,3 +2245,65 @@ a:focus-visible {
     animation: none;
   }
 }
+/* =============================
+   Markdown: tables, hr, strong
+   (GFM tables arrive via remark-gfm)
+============================= */
+.markdown-prose .table-wrap,
+.markdown-prose table {
+  margin-bottom: 1.5rem;
+}
+
+/* Wide tables scroll inside themselves rather than the page */
+.markdown-prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.markdown-prose thead {
+  background: var(--bg-secondary);
+}
+
+.markdown-prose th,
+.markdown-prose td {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown-prose th {
+  color: var(--text-primary);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.markdown-prose tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.markdown-prose strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.markdown-prose hr {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 2.5rem 0;
+}
+
+/* Utility for React-rendered blocks inside .markdown-prose that should
+   opt out of prose typography (forms, card grids). */
+.markdown-prose .not-prose,
+.markdown-prose .not-prose * {
+  line-height: normal;
+}
+
+.markdown-prose .not-prose a {
+  border-bottom: none;
+}

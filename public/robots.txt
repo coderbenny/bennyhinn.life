@@ -1,9 +1,14 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /api/
 
 # Mediapartners-Google
 User-agent: Mediapartners-Google
+Allow: /
+
+# AdsBot-Google
+User-agent: AdsBot-Google
 Allow: /
 
 # Host

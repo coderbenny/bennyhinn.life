@@ -15,12 +15,18 @@ export default function BlogLayout({ children }) {
             <Link href="/blog" className="nav-link active">
               Blog
             </Link>
+            <Link href="/about" className="nav-link">
+              About
+            </Link>
+            <Link href="/contact" className="nav-link">
+              Contact
+            </Link>
           </div>
         </div>
       </nav>
-      <main className="flex-1 max-w-4xl mx-auto w-full px-6 pt-32 pb-12">
+      <div className="flex-1 max-w-4xl mx-auto w-full px-6 pt-32 pb-12">
         {children}
-      </main>
+      </div>
     </div>
   );
 }

@@ -6,6 +6,9 @@ import ShareButton from '@/components/ShareButton';
 export const metadata = {
   title: 'Blog | Benny Hinn Mathew',
   description: 'Writings on software engineering, AI, scalable systems, and DevOps.',
+  alternates: {
+    canonical: '/blog',
+  },
   openGraph: {
     title: 'Blog | Benny Hinn Mathew',
     description: 'Thoughts, technical deep dives, and reflections on building scalable software and AI systems.',
@@ -39,8 +42,10 @@ export default function BlogIndex() {
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-[#ff6b6b] to-[#ffa500] text-transparent bg-clip-text">
           MY BLOG
         </h1>
-        <p className="text-slate-400 text-lg max-w-2xl">
-          Thoughts, technical deep dives and reflections on building scalable software and AI systems.
+        <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
+          First-hand write-ups from production systems: telecom VAS and USSD, M-PESA and
+          payment reliability, Flask and Next.js architecture, queues, databases and applied AI.
+          Every article covers something I have built, operated, or broken.
         </p>
       </header>
 
@@ -70,13 +75,20 @@ export default function BlogIndex() {
                 <div className={`flex-1 flex flex-col justify-between w-full h-full ${isFeatured ? 'py-4' : ''}`}>
                   <div>
                     <div className="flex items-center justify-between gap-x-4 text-xs mb-4">
-                      <time dateTime={post.meta.date} className="text-[#ffb733] font-mono tracking-wider font-semibold">
-                        {new Date(post.meta.date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </time>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <time dateTime={post.meta.date} className="text-[#ffb733] font-mono tracking-wider font-semibold">
+                          {new Date(post.meta.date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </time>
+                        <span className="text-slate-600">&middot;</span>
+                        <span className="text-slate-500 font-mono">{post.meta.readingTime} min read</span>
+                        {post.meta.category && (
+                          <span className="text-slate-500 font-mono">&middot; {post.meta.category}</span>
+                        )}
+                      </div>
                       {isFeatured && (
                         <span className="px-3 py-1 rounded-full bg-[#ff6b6b]/10 text-[#ff6b6b] text-[10px] font-bold tracking-widest uppercase border border-[#ff6b6b]/20">
                           Latest Release
