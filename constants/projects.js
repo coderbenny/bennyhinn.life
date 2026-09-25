@@ -4,7 +4,7 @@ export const PROJECTS = [
     name: "SuperGarage - Tyre Marketplace & Roadside Dispatch",
     url: "https://www.supergarage.online",
     description:
-      "Aninvite-only marketplace connecting Kenyan drivers with vetted tyre sellers and mechanics: browse and buy tyres online, or raise a roadside callout and get matched to the nearest approved garage in minutes. Vendors run their whole business from a dedicated partner app - accept job offers, manage stock, track earnings - while a Flask API handles wave-based dispatch, offline-safe job updates, and Paystack split payments between platform and vendor.",
+      "An invite-only marketplace connecting Kenyan drivers with vetted tyre sellers and mechanics: browse and buy tyres online, or raise a roadside callout and get matched to the nearest approved garage in minutes. Vendors run their whole business from a dedicated partner app - accept job offers, manage stock, track earnings - while a Flask API handles wave-based dispatch, offline-safe job updates, and Paystack split payments between platform and vendor.",
     tech: [
       "Next.js 16",
       "Expo / React Native",
