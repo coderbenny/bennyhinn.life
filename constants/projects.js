@@ -1,6 +1,28 @@
 // app/constants/projects.js
 export const PROJECTS = [
   {
+    name: "SuperGarage - Tyre Marketplace & Roadside Dispatch",
+    url: "https://www.supergarage.online",
+    description:
+      "Aninvite-only marketplace connecting Kenyan drivers with vetted tyre sellers and mechanics: browse and buy tyres online, or raise a roadside callout and get matched to the nearest approved garage in minutes. Vendors run their whole business from a dedicated partner app - accept job offers, manage stock, track earnings - while a Flask API handles wave-based dispatch, offline-safe job updates, and Paystack split payments between platform and vendor.",
+    tech: [
+      "Next.js 16",
+      "Expo / React Native",
+      "Flutter",
+      "Flask",
+      "Celery & Redis",
+      "MySQL",
+      "Paystack",
+      "Firebase Cloud Messaging",
+      "JWT Auth",
+    ],
+    impact:
+      "Web storefront, buyer app and vendor partner app, one dispatch engine",
+    image: "/projects/supergarage.png",
+    category: "Marketplace",
+    featured: true,
+  },
+  {
     name: "GenzMall - Gen-Z Fashion Marketplace",
     url: "https://genzmall.store",
     description:
@@ -21,6 +43,28 @@ export const PROJECTS = [
       "Multi-vendor hub, Paystack checkout, loyalty points and web-push alerts",
     image: "/projects/genzmall.png",
     category: "E-Commerce",
+    featured: true,
+  },
+  {
+    name: "SuperGarage - Tyre Marketplace & Roadside Dispatch",
+    url: "https://www.supergarage.online",
+    description:
+      "A curated, invite-only marketplace connecting Kenyan drivers with vetted tyre sellers and mechanics: browse and buy tyres online, or raise a roadside callout and get matched to the nearest approved garage in minutes. Vendors run their whole business from a dedicated partner app - accept job offers, manage stock, track earnings - while a Flask API handles wave-based dispatch, offline-safe job updates, and Paystack split payments between platform and vendor.",
+    tech: [
+      "Next.js 16",
+      "Expo / React Native",
+      "Flutter",
+      "Flask",
+      "Celery & Redis",
+      "MySQL",
+      "Paystack",
+      "Firebase Cloud Messaging",
+      "JWT Auth",
+    ],
+    impact:
+      "Web storefront, buyer app and vendor partner app, one dispatch engine",
+    image: "/projects/supergarage.png",
+    category: "Marketplace",
     featured: true,
   },
   {
