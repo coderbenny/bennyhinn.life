@@ -1,0 +1,107 @@
+/* The house layer sits above the site chrome (cursor, WhatsApp button, footer). */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #1b1f2e;
+  touch-action: none;
+}
+
+.root :global(.house-canvas) {
+  position: absolute !important;
+  inset: 0;
+}
+
+/* Covers the canvas until the first frame is drawn, then lifts. */
+.curtain {
+  position: absolute;
+  inset: 0;
+  background: #1b1f2e;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+
+.curtainUp {
+  opacity: 0;
+}
+
+.chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  pointer-events: none;
+}
+
+.name {
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 244, 230, 0.75);
+}
+
+.skip {
+  pointer-events: auto;
+  font-size: 0.8rem;
+  color: rgba(255, 244, 230, 0.85);
+  text-decoration: none;
+  border: 1px solid rgba(255, 244, 230, 0.25);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  background: rgba(20, 22, 30, 0.45);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.skip:hover,
+.skip:focus-visible {
+  border-color: rgba(255, 176, 102, 0.8);
+  background: rgba(20, 22, 30, 0.75);
+}
+
+/* Plain content: the page when the house cannot load. */
+.content {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+}
+
+.content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 2.5rem 0 0.75rem;
+}
+
+.content a {
+  color: #ff8787;
+}
+
+.content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.content dt {
+  font-weight: 600;
+  color: #fff;
+}
+
+.content dd {
+  margin: 0 0 0.5rem;
+}

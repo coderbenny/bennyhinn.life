@@ -2,13 +2,7 @@
 import { useState } from 'react';
 import SectionTitle from '../ui/SectionTitle';
 import ContactMethod from '../ui/ContactMethod';
-
-const contacts = [
-  { icon: '📧', label: 'Email', value: 'info@bennyhinn.life', href: 'mailto:info@bennyhinn.life' },
-  { icon: '📱', label: 'Phone', value: '+254-114-092-304', href: 'tel:+254114092304' },
-  { icon: '💼', label: 'LinkedIn', value: 'benny-mathew', href: 'https://www.linkedin.com/in/benny-mathew' },
-  { icon: '💻', label: 'GitHub', value: 'coderbenny', href: 'https://github.com/coderbenny' },
-];
+import { CONTACTS as contacts } from '@/constants/contact';
 
 export default function ContactSlide() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });

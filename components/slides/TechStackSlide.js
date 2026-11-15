@@ -2,38 +2,9 @@
 import SectionTitle from '../ui/SectionTitle';
 import TechCategory from '../ui/TechCategory';
 import CertificationItem from '../ui/CertificationItem';
+import { TECH_STACK as techStack, COMPETENCIES as competencies } from '@/constants/skills';
 
 export default function TechStackSlide() {
-  const techStack = {
-    Frontend: ['React.js', 'Next.js 14+', 'TypeScript', 'TailwindCSS'],
-    Backend: ['Python', 'Flask', 'Django', 'Node.js'],
-    Mobile: ['Flutter', 'Dart'],
-    Database: ['PostgreSQL', 'MySQL', 'MongoDB'],
-    DevOps: ['Docker', 'GCP', 'Firebase', 'CI/CD'],
-    Telecom: ['SMS Gateway', 'MMS', 'IVR', 'USSD']
-  };
-
-  const competencies = [
-    {
-      icon: '💻',
-      title: 'Software Engineering',
-      desc: 'Building scalable, production-grade applications with modern architectures.',
-      tags: ['System Design', 'Clean Code', 'Scalability']
-    },
-    {
-      icon: '🤖',
-      title: 'Artificial Intelligence',
-      desc: 'Integrating AI/ML solutions to solve complex business problems.',
-      tags: ['LLMs', 'Computer Vision', 'Predictive Analytics']
-    },
-    {
-      icon: '🚀',
-      title: 'Entrepreneurship',
-      desc: 'Transforming innovative ideas into viable, market-ready products.',
-      tags: ['Product Strategy', 'Growth', 'MVP Dev']
-    }
-  ];
-
   return (
     <section id="stack" className="slide overflow-y-auto">
       <div className="slide-content py-12">
