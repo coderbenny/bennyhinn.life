@@ -484,12 +484,96 @@ ol.panelList {
   color: #5b5246;
 }
 
+/* Visually hidden, still read out and reachable with Tab. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The name of the book under the pointer or keyboard focus. */
+.bookLabel {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(20, 22, 30, 0.82);
+  border: 1px solid rgba(255, 176, 102, 0.85);
+  color: rgba(255, 244, 230, 0.95);
+  font-size: 0.8rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+  animation: houseFade 0.2s ease both;
+}
+
+.bookLabel small {
+  font-size: 0.68rem;
+  color: #ffd09a;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panelTitle:focus {
+  outline: none;
+}
+
+.panelEyebrow {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a3f1f;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem !important;
+}
+
+.chip {
+  font-size: 0.82rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #c8b9a2;
+  background: #fffaf2;
+  color: #2a241c;
+  cursor: pointer;
+}
+
+.chip:hover,
+.chip:focus-visible {
+  border-color: #9a3f1f;
+}
+
+.panelBack {
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+  border: 0;
+  background: none;
+  color: #9a3f1f;
+  cursor: pointer;
+}
+
 /* Touch screens: every control at least 44px tall, so thumbs hit what they aim for. */
 @media (pointer: coarse) {
   .skip,
   .keyButton,
   .copy,
-  .hotspot {
+  .hotspot,
+  .chip,
+  .panelBack {
     min-height: 44px;
     display: inline-flex;
     align-items: center;

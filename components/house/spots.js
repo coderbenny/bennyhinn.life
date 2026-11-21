@@ -30,9 +30,12 @@ export const SPOTS = {
   living: {
     label: 'Living room',
     parent: 'entry',
-    via: [{ pos: [-0.45, EYE, -2.9] }, { pos: [0.25, EYE, -2.9] }, { pos: [1.5, EYE, -2.4] }],
-    pos: [3.6, 1.55, -0.9],
-    look: [1.3, 1.25, -3.7],
+    // In through the opening, across the room, then turn back to face the
+    // skills shelf on the wall you came in by.
+    via: [{ pos: [-0.45, EYE, -2.9] }, { pos: [0.25, EYE, -2.9] }, { pos: [1.6, EYE, -2.5] }, { pos: [2.8, EYE, -1.8] }],
+    pos: [3.3, 1.5, -1.4],
+    // Aimed low enough that the bottom row clears the room card.
+    look: [0.75, 1.05, -1.3],
     fov: 55,
   },
   gallery: {

@@ -4,7 +4,7 @@ The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is
 
 ![Portfolio Preview](./public/preview.png)
 
-> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms and moving between them are done; the objects in each room (bookshelf, gallery frames, studio, desk) come next.
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them and the skills bookshelf are done; the gallery frames, studio and desk come next.
 
 ## 🌟 Features
 
@@ -111,6 +111,8 @@ npm run house:compress   # gltf-transform                   -> public/house/walk
 `art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the model under 3 MB.
 
 The camera moves between spots (outside, entry, living room, gallery, studio, desk) defined in `components/house/spots.js`. Each spot has its own address, such as `/?room=studio`. Positions in that file are in three.js coordinates: a Blender point (x, y, z) is (x, z, -y) there.
+
+The skills bookshelf in the living room is drawn from `constants/skills.js` (`TECH_STACK` and `SKILL_DETAILS`); a book's thickness counts the projects and roles that use it. `npm run test:house` checks the routes between rooms and that every skill fits on the shelf.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 
