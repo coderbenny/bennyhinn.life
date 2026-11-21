@@ -74,7 +74,8 @@ export default function Walkway({ stage, onMailbox, onDoor, onLoaded }) {
       } else if (o.material.map) {
         const map = o.material.map;
         map.anisotropy = 8;
-        o.material = new THREE.MeshBasicMaterial({ map });
+        // Foliage cards are single quads, seen from both sides.
+        o.material = new THREE.MeshBasicMaterial({ map, side: name === 'Foliage' ? THREE.DoubleSide : THREE.FrontSide });
       }
       found[name] = o;
     });
