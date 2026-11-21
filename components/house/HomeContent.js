@@ -9,7 +9,7 @@ import styles from './house.module.css';
 // Everything in the house, as readable HTML. Shown when the house cannot load.
 export default function HomeContent() {
   return (
-    <article className={styles.content}>
+    <article id="home-content" className={styles.content}>
       <header>
         <h1>Benny Hinn Mathew</h1>
         <p>

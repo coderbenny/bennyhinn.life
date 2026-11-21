@@ -6,8 +6,8 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { EMAIL } from '@/constants/contact';
 
-// The walkway, modelled and lit in Blender (scripts/blender/walkway.py) with
-// the light baked into its textures. Everything is drawn unlit, so it looks
+// The house: the walkway and the rooms inside, modelled and lit in Blender
+// (scripts/blender/walkway.py) with the light baked into its textures. Everything is drawn unlit, so it looks
 // like the Cycles render and costs almost nothing to draw.
 // Blender (x, y, z) is three.js (x, z, -y).
 
@@ -57,10 +57,20 @@ function useHoverCursor(hovered) {
   }, [hovered]);
 }
 
-export default function Walkway({ stage, onMailbox, onDoor, onLoaded }) {
+/**
+ * doorOpen     the front door swings open (walking in, or anywhere inside)
+ * flagUp       the mailbox flag is raised (the letter is open)
+ * interactive  the mailbox and door respond to hover and clicks
+ */
+export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onMailbox, onDoor, onLoaded }) {
   const { scene } = useGLTF(MODEL, false, true);
   const [hover, setHover] = useState(null); // 'mailbox' | 'door' | null
-  useHoverCursor(Boolean(hover) && stage === 'outside');
+  useHoverCursor(Boolean(hover) && interactive);
+
+  // Hover ends when the visitor walks away from the mailbox and door.
+  useEffect(() => {
+    if (!interactive) setHover(null);
+  }, [interactive]);
 
   const parts = useMemo(() => {
     const found = {};
@@ -129,28 +139,27 @@ export default function Walkway({ stage, onMailbox, onDoor, onLoaded }) {
   }, [onLoaded]);
 
   // Door swings open when the visitor goes in; the mailbox flag lifts on hover.
-  const doorOpen = useRef(0);
-  const flagUp = useRef(0);
+  const doorAmount = useRef(0); // 0 closed, 1 open
+  const flagUp = useRef(0); // 0 down, 1 raised
   useFrame((_, dt) => {
     const k = 1 - Math.exp(-dt * 5);
     const door = parts.pivots.door;
     if (door) {
-      const target = stage === 'entering' || stage === 'inside' ? 1 : hover === 'door' ? 0.04 : 0;
-      doorOpen.current += (target - doorOpen.current) * (stage === 'entering' ? 1 - Math.exp(-dt * 2.2) : k);
-      if (freeze.current !== null) doorOpen.current = freeze.current;
-      door.rotation.y = doorOpen.current * 1.45; // about 83 degrees, like a door pushed open by hand
-      parts.Door.material.color.setScalar(hover === 'door' && stage === 'outside' ? 1.18 : 1);
+      const target = doorOpen ? 1 : hover === 'door' ? 0.04 : 0;
+      doorAmount.current += (target - doorAmount.current) * (doorOpen ? 1 - Math.exp(-dt * 2.2) : k);
+      if (freeze.current !== null) doorAmount.current = freeze.current;
+      door.rotation.y = doorAmount.current * 1.45; // about 83 degrees, like a door pushed open by hand
+      parts.Door.material.color.setScalar(hover === 'door' && interactive ? 1.18 : 1);
     }
     const flag = parts.pivots.flag;
     if (flag) {
-      const target = hover === 'mailbox' || stage === 'letter' ? 1 : 0;
+      const target = hover === 'mailbox' || flagRaised ? 1 : 0;
       flagUp.current += (target - flagUp.current) * (1 - Math.exp(-dt * 7));
       if (freezeFlag.current !== null) flagUp.current = freezeFlag.current;
       flag.rotation.x = flagUp.current * (Math.PI / 2);
     }
   });
 
-  const interactive = stage === 'outside';
   const over = (what) => (e) => {
     e.stopPropagation();
     if (interactive) setHover(what);

@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import ContactForm from '@/components/ContactForm';
 import { EMAIL } from '@/constants/contact';
+import useDialogFocus from './useDialogFocus';
 import styles from './house.module.css';
+
+const COPIED_LABEL_MS = 1800;
 
 // Opens from the mailbox: the email to copy, or a note sent through the site.
 export default function LetterPanel({ onClose }) {
@@ -11,39 +14,19 @@ export default function LetterPanel({ onClose }) {
   const dialog = useRef(null);
   const closeButton = useRef(null);
 
-  // A modal dialog: focus moves in when it opens, Tab stays inside it and Esc
-  // closes it. House returns focus to the Mailbox button afterwards.
-  useEffect(() => {
-    closeButton.current?.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-      if (e.key !== 'Tab' || !dialog.current) return;
-      const focusable = dialog.current.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled])'
-      );
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus moves in when it opens; House returns it to the Mailbox button.
+  useDialogFocus(dialog, closeButton, onClose);
+
+  // The "Copied" label resets itself; cancel that if the panel closes first.
+  const resetTimer = useRef(null);
+  useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(EMAIL);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      clearTimeout(resetTimer.current);
+      resetTimer.current = setTimeout(() => setCopied(false), COPIED_LABEL_MS);
     } catch {
       window.location.href = `mailto:${EMAIL}`;
     }

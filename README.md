@@ -4,7 +4,7 @@ The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is
 
 ![Portfolio Preview](./public/preview.png)
 
-> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, mailbox and front door are done; the rooms inside come next.
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms and moving between them are done; the objects in each room (bookshelf, gallery frames, studio, desk) come next.
 
 ## 🌟 Features
 
@@ -104,11 +104,13 @@ Requirements: Blender on your `PATH` (`brew install --cask blender`) and the dev
 ```bash
 npm run house            # all three steps below
 npm run house:model      # scripts/blender/walkway.py       -> art/walkway.blend
-npm run house:bake       # scripts/blender/bake_walkway.py  -> art/walkway-raw.glb (Cycles bake)
+npm run house:bake       # scripts/blender/bake_walkway.py  -> art/walkway-raw.glb (Cycles bake, about an hour)
 npm run house:compress   # gltf-transform                   -> public/house/walkway.glb
 ```
 
-`art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the walkway under 3 MB.
+`art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the model under 3 MB.
+
+The camera moves between spots (outside, entry, living room, gallery, studio, desk) defined in `components/house/spots.js`. Each spot has its own address, such as `/?room=studio`. Positions in that file are in three.js coordinates: a Blender point (x, y, z) is (x, z, -y) there.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 

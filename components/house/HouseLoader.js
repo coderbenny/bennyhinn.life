@@ -16,6 +16,19 @@ function hasWebGL() {
   }
 }
 
+/** Every element outside `el`: the siblings of `el` and of each of its ancestors. */
+function coveredBy(el) {
+  const out = [];
+  for (let node = el; node && node !== document.body; node = node.parentElement) {
+    for (const sibling of node.parentElement?.children ?? []) {
+      if (sibling !== node && !sibling.hasAttribute('inert') && !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(sibling.tagName)) {
+        out.push(sibling);
+      }
+    }
+  }
+  return out;
+}
+
 // The dark layer renders on the server too, so the page never flashes the
 // plain content before the house appears. Without WebGL the layer is removed
 // and the plain content underneath is the page.
@@ -32,8 +45,15 @@ export default function HouseLoader() {
     const root = document.documentElement;
     const before = root.style.overflow;
     root.style.overflow = 'hidden';
+    // Everything the house covers (the plain content, the site footer and
+    // floating buttons) stays in the page for search engines, but Tab and
+    // screen readers must not wander into it. The same content is in the
+    // house's room panels.
+    const covered = coveredBy(document.getElementById('house'));
+    for (const el of covered) el.setAttribute('inert', '');
     return () => {
       root.style.overflow = before;
+      for (const el of covered) el.removeAttribute('inert');
     };
   }, [supported]);
 
@@ -41,14 +61,15 @@ export default function HouseLoader() {
 
   return (
     <div id="house" className={styles.root}>
-      <House onReady={() => setReady(true)} />
-      <div className={`${styles.curtain} ${ready ? styles.curtainUp : ''}`} aria-hidden="true" />
+      {/* First in the page, so "Skip to site" is the first thing Tab reaches. */}
       <div className={styles.chrome}>
         <span className={styles.name}>Benny Hinn</span>
         <Link href="/classic" className={styles.skip}>
           Skip to site
         </Link>
       </div>
+      <House onReady={() => setReady(true)} />
+      <div className={`${styles.curtain} ${ready ? styles.curtainUp : ''}`} aria-hidden="true" />
     </div>
   );
 }
