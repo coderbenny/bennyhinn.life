@@ -140,6 +140,7 @@
 
 .keyButton {
   font-size: 0.8rem;
+  white-space: nowrap;
   color: rgba(255, 244, 230, 0.9);
   background: rgba(20, 22, 30, 0.55);
   border: 1px solid rgba(255, 244, 230, 0.22);
@@ -204,8 +205,13 @@
 
 .close {
   position: absolute;
-  top: 0.6rem;
-  right: 0.8rem;
+  top: 0.15rem;
+  right: 0.3rem;
+  /* A 44px target around a small glyph, so it is easy to hit with a thumb. */
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
   font-size: 1.5rem;
   line-height: 1;
   color: #6b6153;
@@ -228,6 +234,7 @@
 
 .emailRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
@@ -242,7 +249,8 @@
   font-size: 0.9rem;
   color: #2a241c;
   text-decoration: none;
-  word-break: break-all;
+  /* Keep the address whole; on narrow screens Copy wraps below it instead. */
+  white-space: nowrap;
 }
 
 .copy {
@@ -295,4 +303,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+/* Touch screens: every control at least 44px tall, so thumbs hit what they aim for. */
+@media (pointer: coarse) {
+  .skip,
+  .keyButton,
+  .copy {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

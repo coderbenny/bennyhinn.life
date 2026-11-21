@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Link from 'next/link';
 import Walkway from './Walkway';
@@ -29,6 +29,14 @@ export default function House({ onReady }) {
   }, []);
   const arrived = useCallback(() => setStage('inside'), []);
 
+  // The Mailbox button is hidden while the letter is open, so focus goes back
+  // to it once it is on screen again.
+  const mailboxButton = useRef(null);
+  const closeLetter = useCallback(() => {
+    setStage('outside');
+    requestAnimationFrame(() => mailboxButton.current?.focus());
+  }, []);
+
   return (
     <>
       <Canvas
@@ -54,7 +62,7 @@ export default function House({ onReady }) {
 
       {stage === 'outside' && (
         <div className={styles.keys}>
-          <button type="button" className={styles.keyButton} onClick={openLetter}>
+          <button ref={mailboxButton} type="button" className={styles.keyButton} onClick={openLetter}>
             Mailbox
           </button>
           <button type="button" className={styles.keyButton} onClick={enter}>
@@ -63,7 +71,7 @@ export default function House({ onReady }) {
         </div>
       )}
 
-      {stage === 'letter' && <LetterPanel onClose={() => setStage('outside')} />}
+      {stage === 'letter' && <LetterPanel onClose={closeLetter} />}
 
       {stage === 'inside' && (
         <div className={styles.card}>
