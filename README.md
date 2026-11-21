@@ -1,25 +1,27 @@
 # Benny Hinn - Portfolio Website
 
-A modern, interactive portfolio website showcasing my work as a Full Stack Software Engineer specializing in VAS solutions and marketplace platforms. Built with Next.js 15 and featuring a unique slide-based navigation system.
+The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is a small 3D house a visitor walks into, built with three.js. The original one-page slide portfolio lives at `/classic` and is always one click away ("Skip to site").
 
 ![Portfolio Preview](./public/preview.png)
 
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, mailbox and front door are done; the rooms inside come next.
+
 ## 🌟 Features
 
-- **Slide-Based Navigation** - Smooth, cinematic transitions between sections using mouse wheel, keyboard arrows, or navigation dots
-- **Interactive Cursor Effects** - Custom glowing cursor that follows mouse movement
-- **Responsive Design** - Fully optimized for desktop, tablet, and mobile devices
-- **Performance Optimized** - Built with Next.js 15 and Turbopack for lightning-fast load times
-- **Modern UI/UX** - Contemporary design with coral/amber gradient theme and glassmorphism effects
-- **Accessibility First** - WCAG compliant with keyboard navigation and screen reader support
-- **Animated Components** - Smooth fade-in animations and hover effects throughout
+- **3D home page** - A dusk walkway with a mailbox (opens the contact form) and a front door (walks the camera inside). Lighting is baked in Blender, so the scene is drawn unlit and stays cheap on phones
+- **Never trapped** - "Skip to site" on every screen, and the same content rendered as plain HTML under the canvas for search engines, screen readers and devices without WebGL
+- **Classic page at `/classic`** - Slide-based navigation with mouse wheel, keyboard arrows or navigation dots
+- **Blog** - Markdown posts in `content/blog/`
+- **Shared content** - The house and the classic page read the same data files in `constants/`
+- **Responsive and accessible** - Touch targets of 44px on touch screens, reduced-motion support, keyboard-reachable controls
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 15.0.6
-- **React:** 19.0.0
-- **Styling:** TailwindCSS 3.4.1
-- **Font:** Inter (Google Fonts)
+- **Framework:** Next.js 15.0.6, React 19
+- **3D:** three.js, @react-three/fiber, @react-three/drei
+- **3D assets:** Blender (modelling and Cycles light baking, scripted in Python), gltf-transform (meshopt geometry, WebP textures)
+- **Styling:** TailwindCSS 3.4.1, CSS modules for the house
+- **Email:** Resend (`/api/contact`)
 - **Deployment:** Vercel (recommended)
 
 ## 📋 Prerequisites
@@ -74,51 +76,53 @@ npm start
 ## 📁 Project Structure
 
 ```
-portfolio/
+bennyhinn.life/
 ├── app/
-│   ├── components/
-│   │   ├── slides/
-│   │   │   ├── HeroSlide.js          # Hero section with intro
-│   │   │   ├── TechStackSlide.js     # Technologies & certifications
-│   │   │   ├── ProjectsSlide.js      # Portfolio projects
-│   │   │   ├── ExperienceSlide.js    # Work experience timeline
-│   │   │   └── ContactSlide.js       # Contact information
-│   │   ├── ui/
-│   │   │   ├── Button.js             # Reusable button component
-│   │   │   ├── StatItem.js           # Statistics display
-│   │   │   ├── SectionTitle.js       # Section headers
-│   │   │   ├── TechCategory.js       # Tech stack categories
-│   │   │   ├── CertificationItem.js  # Certification cards
-│   │   │   ├── ProjectCard.js        # Project showcase cards
-│   │   │   ├── TimelineItem.js       # Experience timeline items
-│   │   │   └── ContactMethod.js      # Contact links
-│   │   ├── CursorGlow.js             # Animated cursor effect
-│   │   ├── Navigation.js             # Top navigation bar
-│   │   └── SlideIndicators.js        # Side navigation dots
-│   ├── page.js                       # Main page component
-│   ├── layout.js                     # Root layout with metadata
-│   └── globals.css                   # Global styles and animations
-├── public/
-│   ├── benny-logo.jpeg               # Profile image
-├── jsconfig.json
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.js
-├── next.config.mjs
-└── README.md
+│   ├── page.js               # "/" : the 3D house, plus the same content as HTML
+│   ├── classic/page.js       # "/classic" : the one-page slide portfolio
+│   ├── blog/                 # Blog index and posts
+│   ├── about/, contact/      # Other pages
+│   ├── api/contact/          # Contact form endpoint (Resend)
+│   └── layout.js             # Root layout and metadata
+├── components/
+│   ├── house/                # The 3D home: House, Walkway, CameraRig, Sky, LetterPanel, HouseLoader, HomeContent
+│   ├── slides/               # Slides of the classic page
+│   ├── ui/                   # Shared UI pieces
+│   └── ClassicHome.js        # The classic page
+├── constants/                # Content shared by the house and the classic page (projects, skills, experience, music, contact)
+├── content/blog/             # Blog posts in Markdown
+├── scripts/blender/          # Blender scripts that model and bake the house
+└── public/house/             # Compressed 3D models served to the browser
 ```
+
+## 🏠 The 3D house
+
+The scene is modelled and lit in Blender from Python scripts, with the lighting baked into textures. Nothing is modelled by hand, so the whole asset can be rebuilt from the scripts.
+
+Requirements: Blender on your `PATH` (`brew install --cask blender`) and the dev dependencies (`npm install`).
+
+```bash
+npm run house            # all three steps below
+npm run house:model      # scripts/blender/walkway.py       -> art/walkway.blend
+npm run house:bake       # scripts/blender/bake_walkway.py  -> art/walkway-raw.glb (Cycles bake)
+npm run house:compress   # gltf-transform                   -> public/house/walkway.glb
+```
+
+`art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the walkway under 3 MB.
+
+In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 
 ## 🎨 Customization
 
 ### Personal Information
 
-Update your information in the respective slide components:
+Content lives in `constants/` and is shared by the house and the classic page:
 
-**HeroSlide.js** - Name, title, and statistics
-**TechStackSlide.js** - Technologies and certifications
-**ProjectsSlide.js** - Your projects and accomplishments
-**ExperienceSlide.js** - Work experience
-**ContactSlide.js** - Contact information and social links
+**projects.js** - Projects
+**skills.js** - Technologies
+**experience.js** - Work experience
+**music.js** - Tracks (Spotify)
+**contact.js** - Email and social links
 
 ### Color Theme
 
@@ -255,4 +259,4 @@ Full Stack Software Engineer | VAS Solutions Developer
 
 **Built with ❤️ by Benny Hinn**
 
-_Last Updated: December 2025_
+_Last Updated: November 2026_
