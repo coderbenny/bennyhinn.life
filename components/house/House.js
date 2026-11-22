@@ -9,11 +9,12 @@ import CameraRig from './CameraRig';
 import Hotspots from './Hotspots';
 import Bookshelf from './Bookshelf';
 import ProjectGallery from './ProjectGallery';
+import StudioRecords from './StudioRecords';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
 import RoomPanel from './RoomPanel';
 import { ROOMS } from './RoomContent';
-import { FRAMES, HOME, SPOTS } from './spots';
+import { FRAMES, HOME, RECORDS, SPOTS } from './spots';
 import useSpotHistory from './useSpotHistory';
 import styles from './house.module.css';
 
@@ -38,6 +39,13 @@ export default function House({ onReady }) {
   // The gallery: the frame under the pointer or keyboard focus.
   const [frameHover, setFrameHover] = useState(null);
   const [frameFocus, setFrameFocus] = useState(null);
+  // The record wall: the record off the wall (its Spotify id), and the record
+  // under the pointer or keyboard focus (its record id).
+  const [track, setTrack] = useState(null);
+  const [recordHover, setRecordHover] = useState(null);
+  const [recordFocus, setRecordFocus] = useState(null);
+  // A record clicked from the studio door: picked once the walk to the wall ends.
+  const pendingTrack = useRef(null);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -51,6 +59,7 @@ export default function House({ onReady }) {
   const outside = target === HOME && at === HOME;
   const room = !moving && at !== HOME ? ROOMS[at] : null;
   const atFrame = Boolean(at && SPOTS[at]?.frame);
+  const trackTitle = RECORDS.find((r) => r.track.spotifyId === track)?.track.title;
 
   // Panels and the letter belong to the spot they were opened at.
   useEffect(() => {
@@ -60,6 +69,10 @@ export default function House({ onReady }) {
     setBookFocus(null);
     setFrameHover(null);
     setFrameFocus(null);
+    setTrack(null);
+    setRecordHover(null);
+    setRecordFocus(null);
+    if (target !== 'records') pendingTrack.current = null;
     if (target !== HOME) setLetterOpen(false);
   }, [target]);
 
@@ -108,6 +121,7 @@ export default function House({ onReady }) {
   const closePanel = useCallback(() => {
     setPanelOpen(false);
     setSkill(null);
+    setTrack(null);
     refocus.current = () => {
       const from = openedFrom.current;
       return from instanceof HTMLElement && from.isConnected && from !== document.body ? from : panelButton.current;
@@ -124,11 +138,41 @@ export default function House({ onReady }) {
     [panelOpen, openPanel]
   );
 
+  // Taking a record off the wall opens its page; none goes back to all records.
+  const selectTrack = useCallback(
+    (id) => {
+      setTrack(id);
+      if (id && !panelOpen) openPanel();
+    },
+    [panelOpen, openPanel]
+  );
+
+  // A record clicked at the wall is taken off it; clicked from the studio
+  // door, the camera walks to the wall first.
+  const pickRecord = useCallback(
+    (recordId) => {
+      const r = RECORDS.find((x) => x.id === recordId);
+      if (!r) return;
+      if (at === 'records') selectTrack(r.track.spotifyId);
+      else {
+        pendingTrack.current = r.track.spotifyId;
+        go('records');
+      }
+    },
+    [at, selectTrack, go]
+  );
+
   // On arrival, keyboard and screen-reader users land on the room's name,
   // unless they are already focused on something on screen.
   const roomHeading = useRef(null);
   const arrived = useCallback((id) => {
     setAt(id);
+    if (id === 'records' && pendingTrack.current) {
+      setTrack(pendingTrack.current);
+      pendingTrack.current = null;
+      openedFrom.current = null;
+      setPanelOpen(true);
+    }
     // Up close to a frame on a wide screen, its panel opens beside it. On a
     // phone the panel would cover the picture, so it waits for a tap.
     if (ROOMS[id]?.autoOpen && window.matchMedia(WIDE_SCREEN).matches) {
@@ -191,6 +235,16 @@ export default function House({ onReady }) {
             onSelect={go}
             layer={hotspotLayer}
           />
+          <StudioRecords
+            visible={!outside}
+            load={at !== null && at !== HOME}
+            highlighted={recordFocus ?? recordHover}
+            chosen={RECORDS.find((r) => r.track.spotifyId === track)?.id ?? null}
+            interactive={!moving && (at === 'studio' || at === 'records')}
+            onHover={setRecordHover}
+            onSelect={pickRecord}
+            layer={hotspotLayer}
+          />
         </Suspense>
         <CameraRig target={target} onArrived={arrived} reducedMotion={reducedMotion} dragEnabled={!moving && at !== HOME && at !== null} />
       </Canvas>
@@ -248,6 +302,24 @@ export default function House({ onReady }) {
         </ul>
       )}
 
+      {/* The records, for keyboards and screen readers. */}
+      {at === 'records' && !moving && !panelOpen && (
+        <ul className={styles.srOnly} aria-label="Records on the wall">
+          {RECORDS.map((r) => (
+            <li key={r.id}>
+              <button
+                type="button"
+                onFocus={() => setRecordFocus(r.id)}
+                onBlur={() => setRecordFocus(null)}
+                onClick={() => selectTrack(r.track.spotifyId)}
+              >
+                {r.track.title}, a record on the wall
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {room && !panelOpen && (
         <div className={styles.card}>
           <h2 ref={roomHeading} tabIndex={-1} className={styles.cardTitle}>
@@ -283,8 +355,8 @@ export default function House({ onReady }) {
       )}
 
       {room && panelOpen && room.Content && (
-        <RoomPanel title={skill ?? room.title} contentKey={skill} onClose={closePanel}>
-          <room.Content spot={at} onGo={go} skill={skill} onSelectSkill={selectSkill} />
+        <RoomPanel title={skill ?? trackTitle ?? room.title} contentKey={skill ?? track} onClose={closePanel}>
+          <room.Content spot={at} onGo={go} skill={skill} onSelectSkill={selectSkill} track={track} onSelectTrack={selectTrack} />
           {room.previous && (
             <nav className={styles.panelNav} aria-label="Other projects">
               <button type="button" className={styles.chip} onClick={() => go(room.previous)}>

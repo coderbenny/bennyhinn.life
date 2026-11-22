@@ -9,12 +9,16 @@
 // here. Floors are at y = 0.38, eye height is 1.6.
 
 import { PROJECTS } from '../../constants/projects.js';
+import { TRACKS } from '../../constants/music.js';
 import { hang } from './galleryLayout.js';
+import { hangRecords } from './recordWall.js';
 
 const EYE = 1.6;
 
 // The framed projects in the gallery (see galleryLayout.js).
 export const FRAMES = hang(PROJECTS);
+// The records on the studio's back wall (see recordWall.js).
+export const RECORDS = hangRecords(TRACKS);
 
 export const SPOTS = {
   walkway: {
@@ -58,10 +62,28 @@ export const SPOTS = {
   studio: {
     label: 'Studio',
     parent: 'gallery',
-    via: [{ pos: [-0.6, EYE, -9.6] }, { pos: [-1.7, EYE, -9.6] }],
-    pos: [-1.95, EYE, -9.6],
-    look: [-4.4, 1.15, -10.0],
+    // Through the doorway facing the desk, then a step back into the front
+    // corner, turning to take in the desk, the record wall and the guitars.
+    via: [
+      { pos: [-0.6, EYE, -9.6] },
+      { pos: [-1.7, EYE, -9.6], look: [-4.4, 1.3, -9.8] },
+      { pos: [-2.15, EYE, -8.4], look: [-4.0, 1.25, -11.0] },
+    ],
+    pos: [-2.25, EYE, -7.15],
+    look: [-4.0, 1.2, -11.6],
+    portrait: { pos: [-2.3, EYE, -7.0], look: [-3.7, 1.3, -11.8] },
     fov: 60,
+  },
+  records: {
+    label: 'Record wall',
+    parent: 'studio',
+    // Square on to the back wall. The aim sits a little right of the records,
+    // so they clear the panel that opens on the right on wide screens.
+    pos: [-2.85, EYE, -9.2],
+    look: [-2.85, 1.5, -12.4],
+    // On a portrait phone, straight on and far enough back for all five in a row.
+    portrait: { pos: [-3.2, EYE, -8.9], look: [-3.2, 1.62, -12.4] },
+    fov: 50,
   },
   desk: {
     label: 'Desk',
@@ -104,7 +126,8 @@ export const HOTSPOTS = {
     { to: 'studio', at: [-1.7, 1.55, -9.6] },
     { to: 'desk', at: [0.5, 1.55, -10.8] },
   ],
-  studio: [],
+  studio: [{ to: 'records', at: [-3.2, 0.8, -12.0] }],
+  records: [],
   desk: [],
   ...Object.fromEntries(FRAMES.map((f) => [f.id, []])),
 };

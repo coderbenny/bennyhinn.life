@@ -4,7 +4,7 @@ The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is
 
 ![Portfolio Preview](./public/preview.png)
 
-> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf and the projects gallery are done; the studio and desk come next.
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf, the projects gallery and the music studio are done; the desk comes next.
 
 ## 🌟 Features
 
@@ -114,7 +114,9 @@ The camera moves between spots (outside, entry, living room, gallery, studio, de
 
 The skills bookshelf in the living room is drawn from `constants/skills.js` (`TECH_STACK` and `SKILL_DETAILS`); a book's thickness counts the projects and roles that use it. The projects gallery hangs one frame per project in `constants/projects.js` (`components/house/galleryLayout.js`). Its pictures are small WebP copies of the screenshots in `public/projects/`; run `npm run house:frames` after adding or changing a project's screenshot.
 
-`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, and that every project fits on the gallery walls and has its picture.
+The studio hangs one vinyl record per track in `constants/music.js` on its back wall (`components/house/recordWall.js`); each opens the track on Spotify. The covers in `public/house/records/` are fetched from Spotify's public oEmbed endpoint (no login or app needed); run `npm run house:records` after adding a track.
+
+`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, and that every track fits on the record wall and has its cover.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 

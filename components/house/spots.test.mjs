@@ -27,7 +27,9 @@ assert.ok(route(f0, 'gallery').at(-1).pos === p('gallery'));
 assert.equal(spotFromSearch(`?room=${f0}`), f0);
 // Portrait walks end at the frame's portrait pose; other spots are the same either way.
 assert.deepEqual(route('gallery', f0, true).at(-1).pos, SPOTS[f0].portrait.pos);
-assert.equal(pose('studio', true), SPOTS.studio);
+assert.equal(pose('desk', true), SPOTS.desk);
+assert.equal(pose('records', true), SPOTS.records.portrait);
+assert.deepEqual(lineage('records'), ['walkway', 'entry', 'gallery', 'studio', 'records']);
 for (const f of FRAMES) assert.ok(Math.abs(SPOTS[f.id].portrait.pos[0] - f.position[0]) <= 1.75 + 1e-9, 'portrait pose stays inside the gallery');
 // walkway -> entry goes through the porch
 assert.deepEqual(route('walkway', 'entry').map((q) => q.pos), [p('walkway'), [-0.6, 1.6, 3.4], p('entry')]);

@@ -598,6 +598,24 @@ ol.panelList {
   color: #3f372c;
 }
 
+/* A record's cover art in its panel. */
+.cover {
+  display: block;
+  width: 100%;
+  max-width: 17rem;
+  height: auto;
+  aspect-ratio: 1;
+  margin: 0.2rem 0 0.9rem;
+  border-radius: 3px;
+  box-shadow: 0 10px 24px rgba(28, 22, 14, 0.28);
+}
+
+.panelNote {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #7a6f60;
+}
+
 .panelCta {
   display: inline-block;
   margin-top: 0.4rem;

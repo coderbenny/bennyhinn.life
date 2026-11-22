@@ -4,8 +4,9 @@ import { EXPERIENCE } from '@/constants/experience';
 import { CONTACTS } from '@/constants/contact';
 import { ARTIST, TRACKS, trackUrl } from '@/constants/music';
 import { bookFor } from './shelf';
-import { FRAMES, SPOTS } from './spots';
+import { FRAMES, RECORDS, SPOTS } from './spots';
 import { projectSpotId, shortName, subtitle } from './galleryLayout';
+import { recordImage } from './recordWall';
 import styles from './house.module.css';
 
 // What each room holds, from the same data files the classic page uses.
@@ -142,7 +143,10 @@ function Project({ spot }) {
   );
 }
 
-function Music() {
+const credit = (t) => (t.with.length ? `${ARTIST.name} with ${t.with.join(', ')}` : ARTIST.name);
+
+/** The studio from the door: every track, straight to Spotify, and the way to the record wall. */
+function Music({ onGo }) {
   return (
     <>
       <p className={styles.panelLead}>
@@ -150,18 +154,70 @@ function Music() {
         <a href={ARTIST.url} target="_blank" rel="noopener noreferrer">
           {ARTIST.name} on Spotify
         </a>
-        .
+        . The records on the back wall are mine; pick one to listen to it.
       </p>
       <ol className={styles.panelList}>
         {TRACKS.map((t) => (
           <li key={t.spotifyId}>
-            <a href={trackUrl(t)} target="_blank" rel="noopener noreferrer">
+            <a href={trackUrl(t)} target="_blank" rel="noopener noreferrer" aria-label={`${t.title} on Spotify (opens in a new tab)`}>
               {t.title}
             </a>
             {t.with.length > 0 && <span> with {t.with.join(', ')}</span>}
           </li>
         ))}
       </ol>
+      <p>
+        <button type="button" className={styles.panelBack} onClick={() => onGo('records')}>
+          Go to the record wall →
+        </button>
+      </p>
+    </>
+  );
+}
+
+/** One record, taken off the wall: its cover, who is on it, and the way to Spotify. */
+function Track({ id, onSelectTrack }) {
+  const record = RECORDS.find((r) => r.track.spotifyId === id);
+  if (!record) return null;
+  const t = record.track;
+  return (
+    <>
+      <p className={styles.panelEyebrow}>No. {record.index + 1} in my top tracks on Spotify</p>
+      {/* eslint-disable-next-line @next/next/no-img-element -- a small local cover, already sized */}
+      <img className={styles.cover} src={recordImage(t)} alt={`Cover art for ${t.title}`} width={512} height={512} />
+      <p className={styles.panelLead}>{credit(t)}</p>
+      <p>
+        <a className={styles.panelCta} href={trackUrl(t)} target="_blank" rel="noopener noreferrer">
+          Listen on Spotify ↗
+        </a>
+      </p>
+      <p className={styles.panelNote}>Opens Spotify in a new tab. Without a Spotify login it plays a preview.</p>
+      <button type="button" className={styles.panelBack} onClick={() => onSelectTrack(null)}>
+        ← All records
+      </button>
+    </>
+  );
+}
+
+/** The record wall: every record, or one when it is off the wall. */
+function RecordWall({ track, onSelectTrack }) {
+  if (track) return <Track id={track} onSelectTrack={onSelectTrack} />;
+  return (
+    <>
+      <p className={styles.panelLead}>
+        Pick a record off the wall, or here, to see it and play it on Spotify. All of them are on{' '}
+        <a href={ARTIST.url} target="_blank" rel="noopener noreferrer">
+          {ARTIST.name}&apos;s Spotify page
+        </a>
+        .
+      </p>
+      <p className={styles.chips}>
+        {RECORDS.map((r) => (
+          <button key={r.id} type="button" className={styles.chip} onClick={() => onSelectTrack(r.track.spotifyId)}>
+            {r.track.title}
+          </button>
+        ))}
+      </p>
     </>
   );
 }
@@ -194,8 +250,9 @@ function Desk() {
 
 // Per spot: a line for the room card, the panel's button label and title,
 // and its content. Spots without an entry have no panel. Every Content gets
-// `spot`, `onGo` (walk to a spot), `skill` (the book that is out, if any) and
-// `onSelectSkill`; each uses what it needs.
+// `spot`, `onGo` (walk to a spot), `skill` (the book that is out, if any),
+// `onSelectSkill`, `track` (the record off the wall, by Spotify id) and
+// `onSelectTrack`; each uses what it needs.
 export const ROOMS = {
   entry: { line: 'The gallery is straight ahead; the living room is through the opening on the right.' },
   living: {
@@ -210,7 +267,18 @@ export const ROOMS = {
     title: 'Projects',
     Content: Projects,
   },
-  studio: { line: 'Where I make music.', open: 'Music', title: ARTIST.name, Content: Music },
+  studio: {
+    line: `Where I make music as ${ARTIST.name}. My records hang on the back wall.`,
+    open: 'Music',
+    title: ARTIST.name,
+    Content: Music,
+  },
+  records: {
+    line: 'Every record here is one of my tracks. Pick one to listen on Spotify.',
+    open: 'All records',
+    title: ARTIST.name,
+    Content: RecordWall,
+  },
   desk: { line: 'Where the work happens.', open: 'Experience and contact', title: 'Experience and contact', Content: Desk },
   // Each framed project: its panel opens by itself on wide screens.
   ...Object.fromEntries(
