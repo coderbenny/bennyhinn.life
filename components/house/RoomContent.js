@@ -7,6 +7,7 @@ import { bookFor } from './shelf';
 import { FRAMES, RECORDS, SPOTS } from './spots';
 import { projectSpotId, shortName, subtitle } from './galleryLayout';
 import { recordImage } from './recordWall';
+import { CARDS, COMMIT, REPO_URL, commitUrl, timeSince } from './deskLayout';
 import styles from './house.module.css';
 
 // What each room holds, from the same data files the classic page uses.
@@ -222,7 +223,41 @@ function RecordWall({ track, onSelectTrack }) {
   );
 }
 
-function Desk() {
+/** The contact details, each a link. */
+function ContactList() {
+  return (
+    <ul className={styles.panelList}>
+      {CONTACTS.map((c) => (
+        <li key={c.label}>
+          <strong>{c.label}</strong>
+          <p>
+            <a href={c.href} {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              {c.value}
+            </a>
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** The latest commit, with how long ago it was made. */
+function CommitNote() {
+  if (!COMMIT) return <p className={styles.panelLead}>This build of the site has no commit information.</p>;
+  return (
+    <>
+      <p className={styles.panelLead}>
+        <q>{COMMIT.message}</q>
+      </p>
+      <p className={styles.panelNote}>
+        <code>{COMMIT.short}</code> · {timeSince(COMMIT.date)}
+      </p>
+    </>
+  );
+}
+
+/** The desk from the doorway: experience, contact, the latest commit. */
+function Desk({ onGo }) {
   return (
     <>
       <h3 className={styles.panelSubtitle}>Experience</h3>
@@ -237,22 +272,105 @@ function Desk() {
         ))}
       </ul>
       <h3 className={styles.panelSubtitle}>Contact</h3>
-      <ul className={styles.panelList}>
-        {CONTACTS.map((c) => (
-          <li key={c.label}>
-            {c.label}: <a href={c.href}>{c.value}</a>
-          </li>
-        ))}
-      </ul>
+      <ContactList />
+      <h3 className={styles.panelSubtitle}>Latest commit to this site</h3>
+      <CommitNote />
+      <p className={styles.chips}>
+        <button type="button" className={styles.chip} onClick={() => onGo('corkboard')}>
+          Corkboard →
+        </button>
+        <button type="button" className={styles.chip} onClick={() => onGo('monitor')}>
+          Monitor →
+        </button>
+      </p>
     </>
   );
 }
 
+/** One role, taken down from the corkboard. */
+function Role({ role, onSelectCard }) {
+  return (
+    <>
+      <p className={styles.panelEyebrow}>{role.current ? `${role.period} · current role` : role.period}</p>
+      <p className={styles.panelLead}>{role.company}</p>
+      <h3 className={styles.panelSubtitle}>What I did</h3>
+      <ul className={styles.panelBullets}>
+        {role.achievements.map((a) => (
+          <li key={a}>{a}</li>
+        ))}
+      </ul>
+      <button type="button" className={styles.panelBack} onClick={() => onSelectCard(null)}>
+        ← All cards
+      </button>
+    </>
+  );
+}
+
+/** The corkboard: every card, or one when it is taken down. */
+function Corkboard({ card, onSelectCard }) {
+  const chosen = CARDS.find((c) => c.id === card);
+  if (chosen?.kind === 'role') return <Role role={chosen.role} onSelectCard={onSelectCard} />;
+  if (chosen?.kind === 'contact') {
+    return (
+      <>
+        <p className={styles.panelLead}>The quickest way to reach me is email. You can also leave a note in the mailbox outside.</p>
+        <ContactList />
+        <button type="button" className={styles.panelBack} onClick={() => onSelectCard(null)}>
+          ← All cards
+        </button>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className={styles.panelLead}>Where I have worked, and how to reach me. Pick a card off the board, or here.</p>
+      <p className={styles.chips}>
+        {CARDS.map((c) => (
+          <button key={c.id} type="button" className={styles.chip} onClick={() => onSelectCard(c.id)}>
+            {c.kind === 'role' ? c.role.title : 'Get in touch'}
+          </button>
+        ))}
+      </p>
+    </>
+  );
+}
+
+/** The monitor: the commit this site was built from. */
+function Monitor() {
+  return (
+    <>
+      <p className={styles.panelLead}>The last change made to this site, read from git when it was built.</p>
+      <CommitNote />
+      <p>
+        {COMMIT && (
+          <a className={styles.panelCta} href={commitUrl(COMMIT)} target="_blank" rel="noopener noreferrer">
+            See it on GitHub ↗
+          </a>
+        )}
+      </p>
+      <p className={styles.panelNote}>
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+          The whole site is open source
+        </a>
+        .
+      </p>
+    </>
+  );
+}
+
+/** The panel title for a card taken down from the corkboard. */
+export const cardTitle = (id) => {
+  const c = CARDS.find((x) => x.id === id);
+  if (!c) return undefined;
+  return c.kind === 'role' ? c.role.title : 'Get in touch';
+};
+
 // Per spot: a line for the room card, the panel's button label and title,
 // and its content. Spots without an entry have no panel. Every Content gets
 // `spot`, `onGo` (walk to a spot), `skill` (the book that is out, if any),
-// `onSelectSkill`, `track` (the record off the wall, by Spotify id) and
-// `onSelectTrack`; each uses what it needs.
+// `onSelectSkill`, `track` (the record off the wall, by Spotify id),
+// `onSelectTrack`, `card` (the corkboard card taken down) and `onSelectCard`;
+// each uses what it needs.
 export const ROOMS = {
   entry: { line: 'The gallery is straight ahead; the living room is through the opening on the right.' },
   living: {
@@ -279,7 +397,24 @@ export const ROOMS = {
     title: ARTIST.name,
     Content: RecordWall,
   },
-  desk: { line: 'Where the work happens.', open: 'Experience and contact', title: 'Experience and contact', Content: Desk },
+  desk: {
+    line: 'Where the work happens. My experience is on the corkboard; the last change to this site is on the screen.',
+    open: 'Experience and contact',
+    title: 'Experience and contact',
+    Content: Desk,
+  },
+  corkboard: {
+    line: 'Where I have worked, and how to reach me. Pick a card.',
+    open: 'All cards',
+    title: 'Corkboard',
+    Content: Corkboard,
+  },
+  monitor: {
+    line: COMMIT ? `Last commit, ${timeSince(COMMIT.date)}: ${COMMIT.message}` : 'The last change to this site.',
+    open: 'About this commit',
+    title: 'Latest commit',
+    Content: Monitor,
+  },
   // Each framed project: its panel opens by itself on wide screens.
   ...Object.fromEntries(
     FRAMES.map((f, i) => [

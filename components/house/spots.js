@@ -88,10 +88,34 @@ export const SPOTS = {
   desk: {
     label: 'Desk',
     parent: 'gallery',
-    via: [{ pos: [-0.6, EYE, -10.8] }, { pos: [0.5, EYE, -10.8] }],
-    pos: [1.1, EYE, -10.4],
-    look: [3.2, 1.2, -12.2],
+    // In through the doorway, then a step towards the front of the room, so
+    // the desk with its screen and the corkboard are both in view.
+    via: [{ pos: [-0.6, EYE, -10.8] }, { pos: [0.5, EYE, -10.8], look: [3.4, 1.3, -12.0] }],
+    pos: [1.2, EYE, -9.0],
+    look: [3.9, 1.35, -11.2],
+    portrait: { pos: [1.0, EYE, -8.8], look: [3.6, 1.45, -11.4] },
     fov: 55,
+  },
+  corkboard: {
+    label: 'Corkboard',
+    parent: 'desk',
+    // Square on to the board. The aim sits a little right of its centre, so
+    // the cards clear the panel that opens on the right on wide screens.
+    pos: [2.4, EYE, -10.2],
+    look: [4.53, 1.85, -9.85],
+    portrait: { pos: [1.0, EYE, -10.2], look: [4.53, 1.9, -10.2] },
+    fov: 50,
+  },
+  monitor: {
+    label: 'Monitor',
+    parent: 'desk',
+    // Standing behind the chair, looking at the screen; aimed a little right
+    // of it for the panel.
+    pos: [3.1, 1.55, -10.6],
+    look: [3.4, 1.45, -12.05],
+    // On a portrait phone, far enough back for the whole screen to fit.
+    portrait: { pos: [3.1, 1.6, -10.1], look: [3.1, 1.45, -12.05] },
+    fov: 45,
   },
   // One spot in front of each frame, reached down the middle of the gallery.
   ...Object.fromEntries(
@@ -128,7 +152,12 @@ export const HOTSPOTS = {
   ],
   studio: [{ to: 'records', at: [-3.2, 0.8, -12.0] }],
   records: [],
-  desk: [],
+  desk: [
+    { to: 'corkboard', at: [4.45, 2.52, -10.2] },
+    { to: 'monitor', at: [3.1, 1.86, -12.0] },
+  ],
+  corkboard: [],
+  monitor: [],
   ...Object.fromEntries(FRAMES.map((f) => [f.id, []])),
 };
 

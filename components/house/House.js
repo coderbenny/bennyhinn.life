@@ -10,10 +10,13 @@ import Hotspots from './Hotspots';
 import Bookshelf from './Bookshelf';
 import ProjectGallery from './ProjectGallery';
 import StudioRecords from './StudioRecords';
+import Corkboard from './Corkboard';
+import DeskMonitor from './DeskMonitor';
+import { CARDS } from './deskLayout';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
 import RoomPanel from './RoomPanel';
-import { ROOMS } from './RoomContent';
+import { ROOMS, cardTitle } from './RoomContent';
 import { FRAMES, HOME, RECORDS, SPOTS } from './spots';
 import useSpotHistory from './useSpotHistory';
 import styles from './house.module.css';
@@ -46,6 +49,13 @@ export default function House({ onReady }) {
   const [recordFocus, setRecordFocus] = useState(null);
   // A record clicked from the studio door: picked once the walk to the wall ends.
   const pendingTrack = useRef(null);
+  // The corkboard: the card taken down, and the card under the pointer or
+  // keyboard focus; a card clicked from the desk doorway is taken down once
+  // the walk to the board ends.
+  const [card, setCard] = useState(null);
+  const [cardHover, setCardHover] = useState(null);
+  const [cardFocus, setCardFocus] = useState(null);
+  const pendingCard = useRef(null);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -72,7 +82,11 @@ export default function House({ onReady }) {
     setTrack(null);
     setRecordHover(null);
     setRecordFocus(null);
+    setCard(null);
+    setCardHover(null);
+    setCardFocus(null);
     if (target !== 'records') pendingTrack.current = null;
+    if (target !== 'corkboard') pendingCard.current = null;
     if (target !== HOME) setLetterOpen(false);
   }, [target]);
 
@@ -122,6 +136,7 @@ export default function House({ onReady }) {
     setPanelOpen(false);
     setSkill(null);
     setTrack(null);
+    setCard(null);
     refocus.current = () => {
       const from = openedFrom.current;
       return from instanceof HTMLElement && from.isConnected && from !== document.body ? from : panelButton.current;
@@ -162,6 +177,25 @@ export default function House({ onReady }) {
     [at, selectTrack, go]
   );
 
+  // Taking a card off the corkboard opens its page; none goes back to all cards.
+  const selectCard = useCallback(
+    (id) => {
+      setCard(id);
+      if (id && !panelOpen) openPanel();
+    },
+    [panelOpen, openPanel]
+  );
+  const pickCard = useCallback(
+    (id) => {
+      if (at === 'corkboard') selectCard(id);
+      else {
+        pendingCard.current = id;
+        go('corkboard');
+      }
+    },
+    [at, selectCard, go]
+  );
+
   // On arrival, keyboard and screen-reader users land on the room's name,
   // unless they are already focused on something on screen.
   const roomHeading = useRef(null);
@@ -170,6 +204,12 @@ export default function House({ onReady }) {
     if (id === 'records' && pendingTrack.current) {
       setTrack(pendingTrack.current);
       pendingTrack.current = null;
+      openedFrom.current = null;
+      setPanelOpen(true);
+    }
+    if (id === 'corkboard' && pendingCard.current) {
+      setCard(pendingCard.current);
+      pendingCard.current = null;
       openedFrom.current = null;
       setPanelOpen(true);
     }
@@ -245,6 +285,16 @@ export default function House({ onReady }) {
             onSelect={pickRecord}
             layer={hotspotLayer}
           />
+          <Corkboard
+            visible={!outside}
+            highlighted={cardFocus ?? cardHover}
+            chosen={card}
+            interactive={!moving && (at === 'desk' || at === 'corkboard')}
+            onHover={setCardHover}
+            onSelect={pickCard}
+            layer={hotspotLayer}
+          />
+          <DeskMonitor visible={!outside} interactive={!moving && at === 'desk'} onSelect={() => go('monitor')} />
         </Suspense>
         <CameraRig target={target} onArrived={arrived} reducedMotion={reducedMotion} dragEnabled={!moving && at !== HOME && at !== null} />
       </Canvas>
@@ -320,6 +370,19 @@ export default function House({ onReady }) {
         </ul>
       )}
 
+      {/* The corkboard cards, for keyboards and screen readers. */}
+      {at === 'corkboard' && !moving && !panelOpen && (
+        <ul className={styles.srOnly} aria-label="Cards on the corkboard">
+          {CARDS.map((c) => (
+            <li key={c.id}>
+              <button type="button" onFocus={() => setCardFocus(c.id)} onBlur={() => setCardFocus(null)} onClick={() => selectCard(c.id)}>
+                {cardTitle(c.id)}, a card on the corkboard
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {room && !panelOpen && (
         <div className={styles.card}>
           <h2 ref={roomHeading} tabIndex={-1} className={styles.cardTitle}>
@@ -355,8 +418,17 @@ export default function House({ onReady }) {
       )}
 
       {room && panelOpen && room.Content && (
-        <RoomPanel title={skill ?? trackTitle ?? room.title} contentKey={skill ?? track} onClose={closePanel}>
-          <room.Content spot={at} onGo={go} skill={skill} onSelectSkill={selectSkill} track={track} onSelectTrack={selectTrack} />
+        <RoomPanel title={skill ?? trackTitle ?? cardTitle(card) ?? room.title} contentKey={skill ?? track ?? card} onClose={closePanel}>
+          <room.Content
+            spot={at}
+            onGo={go}
+            skill={skill}
+            onSelectSkill={selectSkill}
+            track={track}
+            onSelectTrack={selectTrack}
+            card={card}
+            onSelectCard={selectCard}
+          />
           {room.previous && (
             <nav className={styles.panelNav} aria-label="Other projects">
               <button type="button" className={styles.chip} onClick={() => go(room.previous)}>

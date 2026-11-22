@@ -4,7 +4,7 @@ The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is
 
 ![Portfolio Preview](./public/preview.png)
 
-> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf, the projects gallery and the music studio are done; the desk comes next.
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf, the projects gallery, the music studio and the desk are done; the CV download and the finishing details come next.
 
 ## 🌟 Features
 
@@ -116,7 +116,9 @@ The skills bookshelf in the living room is drawn from `constants/skills.js` (`TE
 
 The studio hangs one vinyl record per track in `constants/music.js` on its back wall (`components/house/recordWall.js`); each opens the track on Spotify. The covers in `public/house/records/` are fetched from Spotify's public oEmbed endpoint (no login or app needed); run `npm run house:records` after adding a track.
 
-`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, and that every track fits on the record wall and has its cover.
+The desk's corkboard pins one card per role in `constants/experience.js` and a contact card from `constants/contact.js` (`components/house/deskLayout.js`). Its monitor shows the site's latest commit, which `next.config.mjs` reads from git at build time.
+
+`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, that every track fits on the record wall and has its cover, and that the corkboard cards fit and the commit on the monitor is read correctly.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 

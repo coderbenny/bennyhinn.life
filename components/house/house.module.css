@@ -598,6 +598,14 @@ ol.panelList {
   color: #3f372c;
 }
 
+/* A role's achievements. */
+.panelBullets {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
 /* A record's cover art in its panel. */
 .cover {
   display: block;
