@@ -8,7 +8,13 @@
 // (scripts/blender/walkway.py), where a point (x, y, z) becomes (x, z, -y)
 // here. Floors are at y = 0.38, eye height is 1.6.
 
+import { PROJECTS } from '../../constants/projects.js';
+import { hang } from './galleryLayout.js';
+
 const EYE = 1.6;
+
+// The framed projects in the gallery (see galleryLayout.js).
+export const FRAMES = hang(PROJECTS);
 
 export const SPOTS = {
   walkway: {
@@ -41,6 +47,9 @@ export const SPOTS = {
   gallery: {
     label: 'Gallery',
     parent: 'entry',
+    // Walking between two places off the gallery (frames, studio, desk) goes
+    // straight along it, not back to where you first stepped in.
+    corridor: true,
     via: [{ pos: [-0.6, EYE, -4.3] }],
     pos: [-0.6, EYE, -5.0],
     look: [-0.6, 1.45, -12.4],
@@ -62,6 +71,22 @@ export const SPOTS = {
     look: [3.2, 1.2, -12.2],
     fov: 55,
   },
+  // One spot in front of each frame, reached down the middle of the gallery.
+  ...Object.fromEntries(
+    FRAMES.map((f) => [
+      f.id,
+      {
+        label: f.name,
+        parent: 'gallery',
+        via: [{ pos: [-0.6, EYE, f.view.pos[2]] }],
+        pos: f.view.pos,
+        look: f.view.look,
+        portrait: f.portraitView,
+        fov: 50,
+        frame: f,
+      },
+    ])
+  ),
 };
 
 export const HOME = 'walkway';
@@ -81,7 +106,14 @@ export const HOTSPOTS = {
   ],
   studio: [],
   desk: [],
+  ...Object.fromEntries(FRAMES.map((f) => [f.id, []])),
 };
+
+/** Where the camera stands at a spot: its portrait pose on a portrait screen, if it has one. */
+export function pose(id, portrait = false) {
+  const spot = SPOTS[id];
+  return portrait && spot.portrait ? spot.portrait : spot;
+}
 
 export function isSpot(id) {
   return typeof id === 'string' && Object.prototype.hasOwnProperty.call(SPOTS, id);
@@ -101,7 +133,7 @@ export function lineage(id) {
  * and, where the walk should face a set direction, a `look`. The first and
  * last points are the spots themselves.
  */
-export function route(from, to) {
+export function route(from, to, portrait = false) {
   const up = lineage(from);
   const down = lineage(to);
   let common = 0;
@@ -111,16 +143,19 @@ export function route(from, to) {
   // Walking up: leave each spot through its doorways in reverse.
   for (let i = up.length - 1; i >= common; i--) {
     const spot = SPOTS[up[i]];
-    add(spot);
+    add(pose(up[i], portrait));
     for (let v = (spot.via || []).length - 1; v >= 0; v--) add(spot.via[v]);
   }
   // The common ancestor: the spot the walk turns at (or starts or ends at).
-  add(SPOTS[down[common - 1]]);
+  // A corridor is passed along, not returned to, when the walk only crosses it.
+  const turn = SPOTS[down[common - 1]];
+  const crossing = up.length > common && down.length > common;
+  if (!(turn.corridor && crossing)) add(pose(down[common - 1], portrait));
   // Walking down: enter each spot through its doorways.
   for (let i = common; i < down.length; i++) {
     const spot = SPOTS[down[i]];
     for (const v of spot.via || []) add(v);
-    add(spot);
+    add(pose(down[i], portrait));
   }
   return dedupe(points);
 }

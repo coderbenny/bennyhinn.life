@@ -4,6 +4,8 @@ import { EXPERIENCE } from '@/constants/experience';
 import { CONTACTS } from '@/constants/contact';
 import { ARTIST, TRACKS, trackUrl } from '@/constants/music';
 import { bookFor } from './shelf';
+import { FRAMES, SPOTS } from './spots';
+import { projectSpotId, shortName, subtitle } from './galleryLayout';
 import styles from './house.module.css';
 
 // What each room holds, from the same data files the classic page uses.
@@ -34,7 +36,7 @@ function Skills({ onSelectSkill }) {
 }
 
 /** One book, pulled off the shelf: what it is and where it has been used. */
-function Skill({ skill, onSelectSkill }) {
+function Skill({ skill, onSelectSkill, onGo }) {
   const book = bookFor(skill);
   if (!book) return null;
   const { projects, roles } = book;
@@ -50,9 +52,7 @@ function Skill({ skill, onSelectSkill }) {
           <ul className={styles.panelList}>
             {projects.map((p) => (
               <li key={p.name}>
-                <a href={p.url} target="_blank" rel="noopener noreferrer">
-                  {p.name}
-                </a>
+                <ProjectLink project={p} onGo={onGo} />
               </li>
             ))}
           </ul>
@@ -82,22 +82,63 @@ function Skill({ skill, onSelectSkill }) {
 }
 
 /** The living room: the overview, or one skill when a book is out. */
-function LivingRoom({ skill, onSelectSkill }) {
-  return skill ? <Skill skill={skill} onSelectSkill={onSelectSkill} /> : <Skills onSelectSkill={onSelectSkill} />;
+function LivingRoom({ skill, onSelectSkill, onGo }) {
+  return skill ? <Skill skill={skill} onSelectSkill={onSelectSkill} onGo={onGo} /> : <Skills onSelectSkill={onSelectSkill} />;
 }
 
-function Projects() {
+/** A project's name, walking to its frame in the gallery; and its live site. */
+function ProjectLink({ project, onGo }) {
+  return (
+    <span className={styles.projectLink}>
+      <button type="button" className={styles.linkButton} onClick={() => onGo(projectSpotId(project))}>
+        {shortName(project)}
+      </button>
+      <a href={project.url} target="_blank" rel="noopener noreferrer" aria-label={`${shortName(project)} live site (opens in a new tab)`}>
+        site ↗
+      </a>
+    </span>
+  );
+}
+
+function Projects({ onGo }) {
   return (
     <ul className={styles.panelList}>
       {PROJECTS.map((p) => (
         <li key={p.name}>
-          <a href={p.url} target="_blank" rel="noopener noreferrer">
-            {p.name}
-          </a>
+          <ProjectLink project={p} onGo={onGo} />
           <p>{p.impact}</p>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** One framed project, seen up close. */
+function Project({ spot }) {
+  const { project } = SPOTS[spot].frame;
+  return (
+    <>
+      <p className={styles.panelEyebrow}>{[project.category, project.year].filter(Boolean).join(' · ')}</p>
+      <p className={styles.panelLead}>
+        <em>{subtitle(project)}</em>
+      </p>
+      <p className={styles.panelLead}>{project.description}</p>
+      <h3 className={styles.panelSubtitle}>Stack</h3>
+      <p className={styles.chips}>
+        {project.tech.map((t) => (
+          <span key={t} className={styles.tag}>
+            {t}
+          </span>
+        ))}
+      </p>
+      <h3 className={styles.panelSubtitle}>Outcome</h3>
+      <p className={styles.panelLead}>{project.impact}</p>
+      <p>
+        <a className={styles.panelCta} href={project.url} target="_blank" rel="noopener noreferrer">
+          Visit {shortName(project)} ↗
+        </a>
+      </p>
+    </>
   );
 }
 
@@ -153,8 +194,8 @@ function Desk() {
 
 // Per spot: a line for the room card, the panel's button label and title,
 // and its content. Spots without an entry have no panel. Every Content gets
-// `skill` (the book that is out, if any) and `onSelectSkill`; only the
-// living room uses them.
+// `spot`, `onGo` (walk to a spot), `skill` (the book that is out, if any) and
+// `onSelectSkill`; each uses what it needs.
 export const ROOMS = {
   entry: { line: 'The gallery is straight ahead; the living room is through the opening on the right.' },
   living: {
@@ -171,4 +212,19 @@ export const ROOMS = {
   },
   studio: { line: 'Where I make music.', open: 'Music', title: ARTIST.name, Content: Music },
   desk: { line: 'Where the work happens.', open: 'Experience and contact', title: 'Experience and contact', Content: Desk },
+  // Each framed project: its panel opens by itself on wide screens.
+  ...Object.fromEntries(
+    FRAMES.map((f, i) => [
+      f.id,
+      {
+        line: f.project.impact,
+        open: 'About this project',
+        title: f.name,
+        Content: Project,
+        autoOpen: true,
+        previous: FRAMES[(i - 1 + FRAMES.length) % FRAMES.length].id,
+        next: FRAMES[(i + 1) % FRAMES.length].id,
+      },
+    ])
+  ),
 };

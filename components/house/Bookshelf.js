@@ -147,7 +147,7 @@ export default function Bookshelf({ highlighted, chosen, interactive, onHover, o
       ))}
       {interactive && label && (
         <Html position={[label.position[0] + label.size[0] / 2, label.position[1] + label.size[1] / 2 + 0.05, label.position[2]]} center portal={layer} zIndexRange={[20, 10]}>
-          <span className={styles.bookLabel} aria-hidden="true">
+          <span className={styles.sceneLabel} aria-hidden="true">
             {label.skill}
             <small>{label.area}</small>
           </span>

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { HOME, SPOTS, route, walkSeconds, withLooks } from './spots';
+import { HOME, SPOTS, pose, route, walkSeconds, withLooks } from './spots';
 
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -31,8 +31,8 @@ export default function CameraRig({ target, onArrived, reducedMotion, dragEnable
   const { camera, size, pointer, gl } = useThree();
   const portrait = size.width < size.height;
 
-  const pos = useRef(new THREE.Vector3(...SPOTS[target].pos));
-  const look = useRef(new THREE.Vector3(...SPOTS[target].look));
+  const pos = useRef(new THREE.Vector3(...pose(target, portrait).pos));
+  const look = useRef(new THREE.Vector3(...pose(target, portrait).look));
   const at = useRef(target); // the last spot the camera reached
   const move = useRef(null); // { to, pos, look, t, seconds, fovFrom, fovTo, fromHome, toHome }
   const fov = useRef(fovFor(target, portrait));
@@ -50,15 +50,15 @@ export default function CameraRig({ target, onArrived, reducedMotion, dragEnable
     }
     const from = move.current ? move.current.to : at.current;
     if (target === from && !move.current) return;
-    const points = withLooks(route(from, target));
+    const points = withLooks(route(from, target, portrait));
     if (move.current) {
       // Turned around mid-walk: set off from where the camera is now.
       points[0] = { pos: pos.current.toArray(), look: look.current.toArray() };
     }
     if (reducedMotion || points.length < 2) {
       move.current = null;
-      pos.current.set(...SPOTS[target].pos);
-      look.current.set(...SPOTS[target].look);
+      pos.current.set(...pose(target, portrait).pos);
+      look.current.set(...pose(target, portrait).look);
       at.current = target;
       onArrived(target);
       return;
@@ -82,6 +82,14 @@ export default function CameraRig({ target, onArrived, reducedMotion, dragEnable
     // `portrait` is read when a walk starts; resizing mid-walk settles at the end.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, reducedMotion, onArrived]);
+
+  // Turning a phone while standing still: settle into the spot's pose for
+  // the new shape (the camera eases there).
+  useEffect(() => {
+    if (move.current || !started.current) return;
+    pos.current.set(...pose(at.current, portrait).pos);
+    look.current.set(...pose(at.current, portrait).look);
+  }, [portrait]);
 
   // Drag to look around, at rest at a spot inside the house.
   useEffect(() => {

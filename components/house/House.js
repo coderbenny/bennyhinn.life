@@ -8,13 +8,18 @@ import Sky from './Sky';
 import CameraRig from './CameraRig';
 import Hotspots from './Hotspots';
 import Bookshelf from './Bookshelf';
+import ProjectGallery from './ProjectGallery';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
 import RoomPanel from './RoomPanel';
 import { ROOMS } from './RoomContent';
-import { HOME, SPOTS } from './spots';
+import { FRAMES, HOME, SPOTS } from './spots';
 import useSpotHistory from './useSpotHistory';
 import styles from './house.module.css';
+
+// Wide enough for panels to sit beside the scene rather than over it
+// (matches the panel's breakpoint in house.module.css).
+const WIDE_SCREEN = '(min-width: 768px)';
 
 // `target` is where the camera is heading, `at` where it last stood; while
 // they differ the camera is walking. The address bar follows `target`.
@@ -30,6 +35,9 @@ export default function House({ onReady }) {
   const [skill, setSkill] = useState(null);
   const [bookHover, setBookHover] = useState(null);
   const [bookFocus, setBookFocus] = useState(null);
+  // The gallery: the frame under the pointer or keyboard focus.
+  const [frameHover, setFrameHover] = useState(null);
+  const [frameFocus, setFrameFocus] = useState(null);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -42,6 +50,7 @@ export default function House({ onReady }) {
   const moving = at !== target;
   const outside = target === HOME && at === HOME;
   const room = !moving && at !== HOME ? ROOMS[at] : null;
+  const atFrame = Boolean(at && SPOTS[at]?.frame);
 
   // Panels and the letter belong to the spot they were opened at.
   useEffect(() => {
@@ -49,6 +58,8 @@ export default function House({ onReady }) {
     setSkill(null);
     setBookHover(null);
     setBookFocus(null);
+    setFrameHover(null);
+    setFrameFocus(null);
     if (target !== HOME) setLetterOpen(false);
   }, [target]);
 
@@ -118,6 +129,12 @@ export default function House({ onReady }) {
   const roomHeading = useRef(null);
   const arrived = useCallback((id) => {
     setAt(id);
+    // Up close to a frame on a wide screen, its panel opens beside it. On a
+    // phone the panel would cover the picture, so it waits for a tap.
+    if (ROOMS[id]?.autoOpen && window.matchMedia(WIDE_SCREEN).matches) {
+      openedFrom.current = null;
+      setPanelOpen(true);
+    }
     requestAnimationFrame(() => {
       const lost = !document.activeElement || document.activeElement === document.body;
       if (lost) roomHeading.current?.focus({ preventScroll: true });
@@ -161,6 +178,17 @@ export default function House({ onReady }) {
             interactive={at === 'living' && !moving}
             onHover={setBookHover}
             onSelect={selectSkill}
+            layer={hotspotLayer}
+          />
+          <ProjectGallery
+            visible={!outside}
+            // Once the visitor stands inside: loading during the walk in from the
+            // walkway would stall the walk while the pictures upload.
+            load={at !== null && at !== HOME}
+            highlighted={frameFocus ?? frameHover}
+            interactive={!moving && (at === 'gallery' || atFrame)}
+            onHover={setFrameHover}
+            onSelect={go}
             layer={hotspotLayer}
           />
         </Suspense>
@@ -207,6 +235,19 @@ export default function House({ onReady }) {
 
       {letterOpen && <LetterPanel onClose={closeLetter} />}
 
+      {/* The frames, for keyboards and screen readers. */}
+      {at === 'gallery' && !moving && !panelOpen && (
+        <ul className={styles.srOnly} aria-label="Projects on the walls">
+          {FRAMES.map((f) => (
+            <li key={f.id}>
+              <button type="button" onFocus={() => setFrameFocus(f.id)} onBlur={() => setFrameFocus(null)} onClick={() => go(f.id)}>
+                {f.name}, framed in the gallery
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {room && !panelOpen && (
         <div className={styles.card}>
           <h2 ref={roomHeading} tabIndex={-1} className={styles.cardTitle}>
@@ -218,6 +259,16 @@ export default function House({ onReady }) {
               <button ref={panelButton} type="button" className={styles.keyButton} onClick={openPanel}>
                 {room.open}
               </button>
+            )}
+            {room.previous && (
+              <>
+                <button type="button" className={styles.keyButton} onClick={() => go(room.previous)} aria-label={`Previous project: ${SPOTS[room.previous].label}`}>
+                  ← Previous
+                </button>
+                <button type="button" className={styles.keyButton} onClick={() => go(room.next)} aria-label={`Next project: ${SPOTS[room.next].label}`}>
+                  Next →
+                </button>
+              </>
             )}
             <button type="button" className={styles.keyButton} onClick={back}>
               Back
@@ -233,7 +284,17 @@ export default function House({ onReady }) {
 
       {room && panelOpen && room.Content && (
         <RoomPanel title={skill ?? room.title} contentKey={skill} onClose={closePanel}>
-          <room.Content skill={skill} onSelectSkill={selectSkill} />
+          <room.Content spot={at} onGo={go} skill={skill} onSelectSkill={selectSkill} />
+          {room.previous && (
+            <nav className={styles.panelNav} aria-label="Other projects">
+              <button type="button" className={styles.chip} onClick={() => go(room.previous)}>
+                ← {SPOTS[room.previous].label}
+              </button>
+              <button type="button" className={styles.chip} onClick={() => go(room.next)}>
+                {SPOTS[room.next].label} →
+              </button>
+            </nav>
+          )}
         </RoomPanel>
       )}
     </>

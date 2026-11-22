@@ -1,6 +1,6 @@
 // Checks for the routes between spots. Run: npm run test:house
 import assert from 'node:assert/strict';
-import { SPOTS, HOTSPOTS, route, lineage, withLooks, spotFromSearch, spotUrl, walkSeconds, isSpot } from './spots.js';
+import { SPOTS, HOTSPOTS, FRAMES, pose, route, lineage, withLooks, spotFromSearch, spotUrl, walkSeconds, isSpot } from './spots.js';
 const p = (id) => SPOTS[id].pos;
 const ids = Object.keys(SPOTS);
 // every route starts at `from`, ends at `to`, has no repeated neighbours
@@ -18,6 +18,17 @@ for (const a of ids) for (const b of ids) assert.deepEqual(route(a, b).map((q) =
 // living -> studio passes the entry and the gallery
 const ls = route('living', 'studio').map((q) => q.pos);
 assert.ok(ls.some((q) => q === p('entry')) && ls.some((q) => q === p('gallery')));
+// Between two frames the walk stays in the corridor, not back to the gallery spot.
+const [f0, f5] = [FRAMES[0].id, FRAMES[5].id];
+assert.ok(!route(f0, f5).some((q) => q.pos === p('gallery')));
+assert.ok(!route(f0, 'studio').some((q) => q.pos === p('gallery')));
+assert.ok(route('entry', f0).some((q) => q.pos === p('gallery')));
+assert.ok(route(f0, 'gallery').at(-1).pos === p('gallery'));
+assert.equal(spotFromSearch(`?room=${f0}`), f0);
+// Portrait walks end at the frame's portrait pose; other spots are the same either way.
+assert.deepEqual(route('gallery', f0, true).at(-1).pos, SPOTS[f0].portrait.pos);
+assert.equal(pose('studio', true), SPOTS.studio);
+for (const f of FRAMES) assert.ok(Math.abs(SPOTS[f.id].portrait.pos[0] - f.position[0]) <= 1.75 + 1e-9, 'portrait pose stays inside the gallery');
 // walkway -> entry goes through the porch
 assert.deepEqual(route('walkway', 'entry').map((q) => q.pos), [p('walkway'), [-0.6, 1.6, 3.4], p('entry')]);
 assert.deepEqual(lineage('desk'), ['walkway', 'entry', 'gallery', 'desk']);
