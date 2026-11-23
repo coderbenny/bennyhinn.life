@@ -120,7 +120,8 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
         map.anisotropy = 8;
         // Foliage cards are single quads, seen from both sides.
         o.material = new THREE.MeshBasicMaterial({ map, side: name === 'Foliage' ? THREE.DoubleSide : THREE.FrontSide });
-        if (name === 'Static') addSway(o.material, swayTime);
+        // The plant is in the living room's mesh; the sway only touches vertices near it.
+        if (name !== 'Foliage') addSway(o.material, swayTime);
       }
       found[name] = o;
     });
@@ -184,7 +185,7 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
       const target = doorOpen ? 1 : hover === 'door' ? 0.04 : 0;
       doorAmount.current += (target - doorAmount.current) * (doorOpen ? 1 - Math.exp(-dt * 2.2) : k);
       if (freeze.current !== null) doorAmount.current = freeze.current;
-      door.rotation.y = doorAmount.current * 1.45; // about 83 degrees, like a door pushed open by hand
+      door.rotation.y = doorAmount.current * 1.66; // about 95 degrees: wide open, so the hall (and its arrivals board) is in clear view
       parts.Door.material.color.setScalar(hover === 'door' && interactive ? 1.18 : 1);
     }
     const flag = parts.pivots.flag;

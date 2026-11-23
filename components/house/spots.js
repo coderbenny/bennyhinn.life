@@ -69,6 +69,15 @@ export const SPOTS = {
     look: [-0.6, 1.45, -12.4],
     fov: 55,
   },
+  painting: {
+    label: 'Living painting',
+    parent: 'gallery',
+    // Up close at the end of the gallery, eyes level with the painting.
+    pos: [-0.6, 1.75, -10.45],
+    // Aimed a little below its middle, so it sits above the room card.
+    look: [-0.6, 2.02, -12.35],
+    fov: 45,
+  },
   studio: {
     label: 'Studio',
     parent: 'gallery',
@@ -83,6 +92,16 @@ export const SPOTS = {
     look: [-4.0, 1.2, -11.6],
     portrait: { pos: [-2.3, EYE, -7.0], look: [-3.7, 1.3, -11.8] },
     fov: 60,
+  },
+  beats: {
+    label: 'Beat station',
+    parent: 'studio',
+    // Leaning over the desk, looking down at the pads and the keyboard.
+    pos: [-3.05, 1.85, -9.45],
+    look: [-4.0, 1.1, -9.45],
+    // On a portrait phone, further back so all the keys fit across.
+    portrait: { pos: [-2.2, 2.0, -9.5], look: [-4.0, 1.1, -9.5] },
+    fov: 55,
   },
   records: {
     label: 'Record wall',
@@ -162,8 +181,14 @@ export const HOTSPOTS = {
   gallery: [
     { to: 'studio', at: [-1.7, 1.55, -9.6] },
     { to: 'desk', at: [0.5, 1.55, -10.8] },
+    { to: 'painting', at: [-0.6, 2.85, -12.3] },
   ],
-  studio: [{ to: 'records', at: [-3.2, 0.8, -12.0] }],
+  painting: [],
+  studio: [
+    { to: 'records', at: [-3.2, 0.8, -12.0] },
+    { to: 'beats', at: [-3.95, 1.45, -9.6] },
+  ],
+  beats: [],
   records: [],
   desk: [
     { to: 'corkboard', at: [4.45, 2.52, -10.2] },

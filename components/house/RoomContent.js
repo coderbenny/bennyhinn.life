@@ -394,7 +394,11 @@ export const cardTitle = (id) => {
 // each uses what it needs. `also` lists places to walk to that have no
 // hotspot in view; each gets a button on the room card.
 export const ROOMS = {
-  entry: { line: 'The gallery is straight ahead; the living room is through the opening on the right.' },
+  entry: { line: 'The gallery is straight ahead, the living room through the opening on the right. The board on the left says hello.' },
+  painting: { line: 'A living painting: generative, never the same twice. Move your cursor (or a finger) across it to stir the paint.' },
+  beats: {
+    line: 'Tap the pads and keys to make a beat. On a keyboard, Z X C V, A S D F, Q W E R and 1 2 3 4 play the pads.',
+  },
   living: {
     line: 'One book for every tool I build with. Pick one off the shelf.',
     open: 'Skills',

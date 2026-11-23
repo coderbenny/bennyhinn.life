@@ -1,5 +1,6 @@
 // Soft sounds for the house: the door, the mailbox flag, a book sliding out,
-// a record leaving its sleeve, a card coming off the corkboard. All are made
+// a record leaving its sleeve, a card coming off the corkboard, the arrivals
+// board's flaps. All are made
 // with the Web Audio API on the spot (filtered noise and a few oscillators),
 // so there are no audio files to load. They only ever play in answer to the
 // visitor's own clicks, and a mute button in the corner turns them off; the
@@ -143,6 +144,14 @@ const SOUNDS = {
       hiss(t + 0.3 + Math.random() * 1.6, { duration: 0.008, type: 'highpass', freq: 2500, gain: 0.08 + Math.random() * 0.1, attack: 0.001 });
     }
   },
+  // The arrivals board: a run of small flap clicks that thins out as the
+  // wheels arrive.
+  flaps(t) {
+    for (let i = 0; i < 34; i++) {
+      const at = t + Math.pow(i / 34, 1.6) * 1.6 + Math.random() * 0.02;
+      hiss(at, { duration: 0.012, type: 'bandpass', freq: 2600 + Math.random() * 900, q: 2, gain: 0.07 + Math.random() * 0.05, attack: 0.001 });
+    }
+  },
   // A pin pulled and the card lifted off the cork.
   card(t) {
     hiss(t, { duration: 0.02, type: 'highpass', freq: 2500, gain: 0.2, attack: 0.002 });
@@ -158,6 +167,132 @@ export function play(name) {
   if (c.state === 'suspended') c.resume().catch(() => {});
   try {
     SOUNDS[name](c.currentTime + 0.01);
+  } catch {
+    // A sound that fails to play should never break the house.
+  }
+}
+
+// The beat station in the studio: 16 drum pads and a 49-key synth, made the
+// same way as the sounds above. Louder than the house's sounds, since the
+// visitor is playing them on purpose; still quiet, and still muted by Mute.
+
+function voice(at, { type, freq, to, duration, gain, filter }) {
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, at);
+  if (to) osc.frequency.exponentialRampToValueAtTime(to, at + duration);
+  const env = ctx.createGain();
+  env.gain.setValueAtTime(gain, at);
+  env.gain.exponentialRampToValueAtTime(0.0001, at + duration);
+  let node = osc;
+  if (filter) {
+    const f = ctx.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.value = filter;
+    osc.connect(f);
+    node = f;
+  }
+  node.connect(env).connect(master);
+  osc.start(at);
+  osc.stop(at + duration + 0.02);
+}
+
+const DRUMS = {
+  kick(t) {
+    voice(t, { type: 'sine', freq: 150, to: 42, duration: 0.38, gain: 1.4 });
+    hiss(t, { duration: 0.02, type: 'lowpass', freq: 3000, gain: 0.4, attack: 0.001 });
+  },
+  snare(t) {
+    hiss(t, { duration: 0.2, freq: 1900, q: 0.7, gain: 0.9, attack: 0.002 });
+    voice(t, { type: 'triangle', freq: 220, to: 160, duration: 0.11, gain: 0.5 });
+  },
+  clap(t) {
+    for (const d of [0, 0.012, 0.025]) hiss(t + d, { duration: 0.025, freq: 1300, q: 1.2, gain: 0.8, attack: 0.001 });
+    hiss(t + 0.03, { duration: 0.18, freq: 1200, q: 0.9, gain: 0.5, attack: 0.002 });
+  },
+  hat(t) {
+    hiss(t, { duration: 0.05, type: 'highpass', freq: 7500, gain: 0.45, attack: 0.001 });
+  },
+  'open hat'(t) {
+    hiss(t, { duration: 0.38, type: 'highpass', freq: 7000, gain: 0.35, attack: 0.002 });
+  },
+  'low tom'(t) {
+    voice(t, { type: 'sine', freq: 110, to: 70, duration: 0.4, gain: 1.0 });
+  },
+  'mid tom'(t) {
+    voice(t, { type: 'sine', freq: 150, to: 95, duration: 0.35, gain: 0.95 });
+  },
+  'high tom'(t) {
+    voice(t, { type: 'sine', freq: 205, to: 130, duration: 0.3, gain: 0.9 });
+  },
+  rim(t) {
+    voice(t, { type: 'triangle', freq: 1700, duration: 0.035, gain: 0.5 });
+    hiss(t, { duration: 0.015, type: 'highpass', freq: 3000, gain: 0.3, attack: 0.001 });
+  },
+  cowbell(t) {
+    voice(t, { type: 'square', freq: 540, duration: 0.28, gain: 0.18, filter: 900 });
+    voice(t, { type: 'square', freq: 800, duration: 0.28, gain: 0.18, filter: 900 });
+  },
+  shaker(t) {
+    hiss(t, { duration: 0.13, type: 'highpass', freq: 5000, gain: 0.35, attack: 0.04 });
+  },
+  crash(t) {
+    hiss(t, { duration: 1.5, type: 'highpass', freq: 4000, gain: 0.35, attack: 0.003 });
+  },
+};
+
+function bass(semitones) {
+  return (t) => {
+    const f = 65.41 * 2 ** (semitones / 12); // from C2
+    voice(t, { type: 'sine', freq: f * 1.06, to: f, duration: 0.9, gain: 1.1 });
+  };
+}
+DRUMS['bass C'] = bass(0);
+DRUMS['bass D#'] = bass(3);
+DRUMS['bass F'] = bass(5);
+DRUMS['bass G'] = bass(7);
+
+/** Plays a drum pad by its sound's name (see beatLayout.js). */
+export function drum(name) {
+  if (muted || !DRUMS[name]) return;
+  const c = audio();
+  if (!c) return;
+  if (c.state === 'suspended') c.resume().catch(() => {});
+  try {
+    DRUMS[name](c.currentTime + 0.005);
+  } catch {
+    // A sound that fails to play should never break the house.
+  }
+}
+
+/** Plays a note on the synth: two slightly detuned saws through a closing filter. */
+export function note(hz) {
+  if (muted) return;
+  const c = audio();
+  if (!c) return;
+  if (c.state === 'suspended') c.resume().catch(() => {});
+  try {
+    const t = c.currentTime + 0.005;
+    const filter = c.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.Q.value = 2;
+    filter.frequency.setValueAtTime(2600, t);
+    filter.frequency.exponentialRampToValueAtTime(700, t + 0.5);
+    const env = c.createGain();
+    env.gain.setValueAtTime(0.0001, t);
+    env.gain.exponentialRampToValueAtTime(0.28, t + 0.008);
+    env.gain.exponentialRampToValueAtTime(0.09, t + 0.3);
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+    filter.connect(env).connect(master);
+    for (const cents of [-7, 7]) {
+      const osc = c.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = hz;
+      osc.detune.value = cents;
+      osc.connect(filter);
+      osc.start(t);
+      osc.stop(t + 0.95);
+    }
   } catch {
     // A sound that fails to play should never break the house.
   }

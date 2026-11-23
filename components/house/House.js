@@ -18,8 +18,12 @@ import WallClock from './WallClock';
 import WallCalendar from './WallCalendar';
 import DeskMug from './DeskMug';
 import SmartTv from './SmartTv';
+import ArrivalsBoard, { nextBoardPage } from './ArrivalsBoard';
+import LivingPainting from './LivingPainting';
+import BeatStation from './BeatStation';
+import { PAD_KEYS, PAD_SOUNDS } from './beatLayout';
 import { PLAYING, command as tvCommand, getTvState, markBlocked, subscribeTv } from './tvStore';
-import { onMutedChange, play } from './sound';
+import { drum, onMutedChange, play } from './sound';
 import { CARDS } from './deskLayout';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
@@ -381,6 +385,14 @@ export default function House({ onReady }) {
           <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
           <DeskMug visible={!outside} reducedMotion={reducedMotion} />
           <SmartTv visible={!outside} on={tvOn} showing={at === 'tv' && !moving && !panelOpen} />
+          <ArrivalsBoard visible={!outside} interactive={!moving && at === 'entry'} reducedMotion={reducedMotion} />
+          <LivingPainting
+            visible={!outside}
+            interactive={!moving && (at === 'gallery' || at === 'painting')}
+            reducedMotion={reducedMotion}
+            onSelect={at === 'gallery' ? () => go('painting') : undefined}
+          />
+          <BeatStation active={!moving && at === 'beats'} />
         </Suspense>
         <CameraRig target={target} onArrived={arrived} reducedMotion={reducedMotion} dragEnabled={!moving && at !== HOME && at !== null} />
       </Canvas>
@@ -458,6 +470,19 @@ export default function House({ onReady }) {
 
       {at === 'monitor' && !moving && !panelOpen && <TerminalInput ref={terminal} autoFocus={!coarsePointer} />}
 
+      {/* The drum pads, for screen readers (keyboards also have the letter keys). */}
+      {at === 'beats' && !moving && (
+        <ul className={styles.srOnly} aria-label="Drum pads">
+          {PAD_SOUNDS.map((name, i) => (
+            <li key={name}>
+              <button type="button" onClick={() => drum(name)}>
+                {name}, key {PAD_KEYS[i].toUpperCase()}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {/* The corkboard cards, for keyboards and screen readers. */}
       {at === 'corkboard' && !moving && !panelOpen && (
         <ul className={styles.srOnly} aria-label="Cards on the corkboard">
@@ -482,6 +507,11 @@ export default function House({ onReady }) {
             {room.open && (
               <button ref={panelButton} type="button" className={styles.keyButton} onClick={openPanel}>
                 {room.open}
+              </button>
+            )}
+            {at === 'entry' && (
+              <button type="button" className={styles.keyButton} onClick={nextBoardPage}>
+                Flip the board
               </button>
             )}
             {room.also?.map((a) => (
