@@ -14,6 +14,39 @@ import { EMAIL } from '@/constants/contact';
 const MODEL = '/house/walkway.glb';
 const MAILBOX = new THREE.Vector3(-1.6, 1.19, 8.4);
 
+// The plant by the living-room window sways a little, as if in a draught.
+// It is part of the baked mesh, so the sway happens in the vertex shader:
+// only vertices near the plant and above its pot's rim move, by a couple of
+// centimetres. Positions are three.js metres (scripts/blender/walkway.py,
+// living_room(): the plant stands at Blender (4.05, 0.75), its pot 0.72 high).
+const SWAY = { centre: [4.05, -0.75], inner: 0.25, outer: 0.5, from: 0.76, full: 1.6, amount: 0.022 };
+
+function addSway(material, time) {
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uSwayTime = time;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform float uSwayTime;')
+      .replace(
+        '#include <project_vertex>',
+        `{
+          vec3 wp = (modelMatrix * vec4(transformed, 1.0)).xyz;
+          float r = length(wp.xz - vec2(${SWAY.centre[0].toFixed(3)}, ${SWAY.centre[1].toFixed(3)}));
+          float k = (1.0 - smoothstep(${SWAY.inner.toFixed(3)}, ${SWAY.outer.toFixed(3)}, r)) * smoothstep(${SWAY.from.toFixed(3)}, ${SWAY.full.toFixed(3)}, wp.y);
+          if (k > 0.0) {
+            float t = uSwayTime;
+            vec3 off = vec3(
+              sin(t * 1.3 + wp.y * 2.5) + 0.4 * sin(t * 2.9 + wp.x * 7.0),
+              0.0,
+              0.5 * sin(t * 1.1 + 1.7 + wp.y * 3.0)
+            ) * ${SWAY.amount.toFixed(4)} * k;
+            transformed += inverse(mat3(modelMatrix)) * off;
+          }
+        }
+        #include <project_vertex>`
+      );
+  };
+}
+
 function plateTexture() {
   const canvas = document.createElement('canvas');
   canvas.width = 1024;
@@ -62,8 +95,9 @@ function useHoverCursor(hovered) {
  * flagUp       the mailbox flag is raised (the letter is open)
  * interactive  the mailbox and door respond to hover and clicks
  */
-export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onMailbox, onDoor, onLoaded }) {
+export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onMailbox, onDoor, onLoaded, reducedMotion }) {
   const { scene } = useGLTF(MODEL, false, true);
+  const swayTime = useMemo(() => ({ value: 0 }), []);
   const [hover, setHover] = useState(null); // 'mailbox' | 'door' | null
   useHoverCursor(Boolean(hover) && interactive);
 
@@ -86,6 +120,7 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
         map.anisotropy = 8;
         // Foliage cards are single quads, seen from both sides.
         o.material = new THREE.MeshBasicMaterial({ map, side: name === 'Foliage' ? THREE.DoubleSide : THREE.FrontSide });
+        if (name === 'Static') addSway(o.material, swayTime);
       }
       found[name] = o;
     });
@@ -111,7 +146,7 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
     // Mailbox flag: pivots at the front end of its arm, near the bottom.
     if (found.MailFlag) pivots.flag = hinge(found.MailFlag, (b) => new THREE.Vector3((b.min.x + b.max.x) / 2, b.min.y + 0.01, b.max.z - 0.01));
     return { ...found, pivots };
-  }, [scene]);
+  }, [scene, swayTime]);
 
   const plate = useMemo(() => plateTexture(), []);
 
@@ -142,6 +177,7 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
   const doorAmount = useRef(0); // 0 closed, 1 open
   const flagUp = useRef(0); // 0 down, 1 raised
   useFrame((_, dt) => {
+    if (!reducedMotion) swayTime.value += dt;
     const k = 1 - Math.exp(-dt * 5);
     const door = parts.pivots.door;
     if (door) {

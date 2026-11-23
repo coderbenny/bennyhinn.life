@@ -92,9 +92,10 @@ export const SPOTS = {
     // the desk with its screen and the corkboard are both in view.
     via: [{ pos: [-0.6, EYE, -10.8] }, { pos: [0.5, EYE, -10.8], look: [3.4, 1.3, -12.0] }],
     pos: [1.2, EYE, -9.0],
-    look: [3.9, 1.35, -11.2],
+    // Turned a little left of the corner, so the wall calendar by the desk is in view too.
+    look: [3.6, 1.45, -11.45],
     portrait: { pos: [1.0, EYE, -8.8], look: [3.6, 1.45, -11.4] },
-    fov: 55,
+    fov: 58,
   },
   corkboard: {
     label: 'Corkboard',

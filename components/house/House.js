@@ -12,6 +12,10 @@ import ProjectGallery from './ProjectGallery';
 import StudioRecords from './StudioRecords';
 import Corkboard from './Corkboard';
 import DeskMonitor from './DeskMonitor';
+import WallClock from './WallClock';
+import WallCalendar from './WallCalendar';
+import DeskMug from './DeskMug';
+import { play } from './sound';
 import { CARDS } from './deskLayout';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
@@ -89,6 +93,30 @@ export default function House({ onReady }) {
     if (target !== 'corkboard') pendingCard.current = null;
     if (target !== HOME) setLetterOpen(false);
   }, [target]);
+
+  // Sounds, each in answer to something the visitor did.
+  // The door: not on the first load (a deep link starts inside, and nothing
+  // was clicked yet), only when it opens or closes after that.
+  const wasOutside = useRef(null);
+  useEffect(() => {
+    if (at === null) return;
+    if (wasOutside.current === null) wasOutside.current = outside;
+    else if (wasOutside.current && !outside) play('door');
+    else if (!wasOutside.current && outside) play('close');
+    wasOutside.current = outside;
+  }, [outside, at]);
+  useEffect(() => {
+    if (letterOpen) play('flag');
+  }, [letterOpen]);
+  useEffect(() => {
+    if (skill) play('book');
+  }, [skill]);
+  useEffect(() => {
+    if (track) play('record');
+  }, [track]);
+  useEffect(() => {
+    if (card) play('card');
+  }, [card]);
 
   const go = useCallback(
     (id) => {
@@ -253,6 +281,7 @@ export default function House({ onReady }) {
             onMailbox={openLetter}
             onDoor={() => go('entry')}
             onLoaded={onReady}
+            reducedMotion={reducedMotion}
           />
           {/* Inside the boundary: hotspots appear with the house, not before it. */}
           <Hotspots spot={at ?? target} visible={!moving && !panelOpen} onGo={go} layer={hotspotLayer} />
@@ -295,6 +324,9 @@ export default function House({ onReady }) {
             layer={hotspotLayer}
           />
           <DeskMonitor visible={!outside} interactive={!moving && at === 'desk'} onSelect={() => go('monitor')} />
+          <WallClock visible={!outside} reducedMotion={reducedMotion} />
+          <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
+          <DeskMug visible={!outside} reducedMotion={reducedMotion} />
         </Suspense>
         <CameraRig target={target} onArrived={arrived} reducedMotion={reducedMotion} dragEnabled={!moving && at !== HOME && at !== null} />
       </Canvas>

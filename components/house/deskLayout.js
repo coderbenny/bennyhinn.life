@@ -93,3 +93,9 @@ export function timeSince(date, now = new Date()) {
   if (days < 365) return plural(Math.round(days / 30.44), 'month');
   return plural(Math.floor(days / 365.25), 'year');
 }
+
+// Phase 7: the small things in the nook. The back wall is at z -12.4; the
+// desk top (Blender DeskTop) is x 1.9 to 4.3, z -11.7 to -12.35, at y 1.03.
+export const CLOCK = { position: [3.1, 2.42, -12.388], radius: 0.15 };
+export const CALENDAR = { position: [1.95, 2.04, -12.392], width: 0.36, height: 0.52 };
+export const MUG = { position: [2.55, 1.03, -11.86], radius: 0.041, height: 0.095 };

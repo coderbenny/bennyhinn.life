@@ -4,7 +4,7 @@ The portfolio of a full-stack and AI engineer in Nairobi. The home page (`/`) is
 
 ![Portfolio Preview](./public/preview.png)
 
-> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf, the projects gallery, the music studio and the desk are done; the CV download and the finishing details come next.
+> **Work in progress:** the 3D house is being built on the `feat/home` branch. The walkway, the rooms, moving between them, the skills bookshelf, the projects gallery, the music studio, the desk and the finishing details are done; the CV download and the launch come next.
 
 ## 🌟 Features
 
@@ -116,9 +116,11 @@ The skills bookshelf in the living room is drawn from `constants/skills.js` (`TE
 
 The studio hangs one vinyl record per track in `constants/music.js` on its back wall (`components/house/recordWall.js`); each opens the track on Spotify. The covers in `public/house/records/` are fetched from Spotify's public oEmbed endpoint (no login or app needed); run `npm run house:records` after adding a track.
 
-The desk's corkboard pins one card per role in `constants/experience.js` and a contact card from `constants/contact.js` (`components/house/deskLayout.js`). Its monitor shows the site's latest commit, which `next.config.mjs` reads from git at build time.
+The desk's corkboard pins one card per role in `constants/experience.js` and a contact card from `constants/contact.js` (`components/house/deskLayout.js`). Its monitor shows the site's latest commit, which `next.config.mjs` reads from git at build time. The wall calendar beside it shades each day by Benny's public GitHub contributions, which `npm run house:contributions` saves to `public/house/contributions.json`; it runs before every build and falls back to this repo's commits if GitHub cannot be reached.
 
-`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, that every track fits on the record wall and has its cover, and that the corkboard cards fit and the commit on the monitor is read correctly.
+The house makes a few soft sounds (the door, a book, a record, a card), made with the Web Audio API, only in answer to clicks; the Mute button beside "Skip to site" turns them off.
+
+`npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, that every track fits on the record wall and has its cover, and that the corkboard cards fit and the commit on the monitor is read correctly, and that the clock keeps Nairobi time and the calendar's months and data are right.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 
