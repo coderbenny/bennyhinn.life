@@ -2,7 +2,7 @@ import { PROJECTS } from '@/constants/projects';
 import { TECH_STACK } from '@/constants/skills';
 import { EXPERIENCE } from '@/constants/experience';
 import { CONTACTS } from '@/constants/contact';
-import { ARTIST, TRACKS, trackUrl } from '@/constants/music';
+import { ARTIST, TRACKS, YOUTUBE_PLAYLIST, trackUrl } from '@/constants/music';
 import { bookFor } from './shelf';
 import { FRAMES, RECORDS, SPOTS } from './spots';
 import { projectSpotId, shortName, subtitle } from './galleryLayout';
@@ -358,6 +358,27 @@ function Monitor() {
   );
 }
 
+/** The TV: the playlist it plays, and where to watch it properly. */
+function Tv() {
+  return (
+    <>
+      <p className={styles.panelLead}>My music videos, playing from the top of the playlist. The house&apos;s Mute button turns the TV down too.</p>
+      <p>
+        <a className={styles.panelCta} href={YOUTUBE_PLAYLIST.url} target="_blank" rel="noopener noreferrer">
+          Watch on YouTube ↗
+        </a>
+      </p>
+      <p className={styles.panelNote}>
+        The same songs are on{' '}
+        <a href={ARTIST.url} target="_blank" rel="noopener noreferrer">
+          Spotify
+        </a>{' '}
+        and on the record wall in the studio.
+      </p>
+    </>
+  );
+}
+
 /** The panel title for a card taken down from the corkboard. */
 export const cardTitle = (id) => {
   const c = CARDS.find((x) => x.id === id);
@@ -370,14 +391,23 @@ export const cardTitle = (id) => {
 // `spot`, `onGo` (walk to a spot), `skill` (the book that is out, if any),
 // `onSelectSkill`, `track` (the record off the wall, by Spotify id),
 // `onSelectTrack`, `card` (the corkboard card taken down) and `onSelectCard`;
-// each uses what it needs.
+// each uses what it needs. `also` lists places to walk to that have no
+// hotspot in view; each gets a button on the room card.
 export const ROOMS = {
   entry: { line: 'The gallery is straight ahead; the living room is through the opening on the right.' },
   living: {
     line: 'One book for every tool I build with. Pick one off the shelf.',
     open: 'Skills',
+    // The TV is behind you here, where a hotspot cannot show, so the card offers it.
+    also: [{ to: 'tv', label: 'Watch TV' }],
     title: 'Skills',
     Content: LivingRoom,
+  },
+  tv: {
+    line: `${YOUTUBE_PLAYLIST.title}: my music videos.`,
+    open: 'About the playlist',
+    title: YOUTUBE_PLAYLIST.title,
+    Content: Tv,
   },
   gallery: {
     line: 'The projects hang here. The studio is on the left, the desk on the right.',

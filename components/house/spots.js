@@ -48,6 +48,16 @@ export const SPOTS = {
     look: [0.75, 1.05, -1.3],
     fov: 55,
   },
+  tv: {
+    label: 'TV',
+    parent: 'living',
+    // Sitting on the front of the sofa, eyes at seated height, facing the TV.
+    pos: [2.75, 1.28, -3.35],
+    look: [4.4, 1.55, -3.35],
+    // On a portrait phone, standing behind the sofa so the whole screen fits.
+    portrait: { pos: [1.75, 1.55, -3.35], look: [4.4, 1.55, -3.35] },
+    fov: 45,
+  },
   gallery: {
     label: 'Gallery',
     parent: 'entry',
@@ -147,7 +157,8 @@ export const HOTSPOTS = {
     { to: 'living', at: [0.25, 1.55, -2.9] },
     { to: 'gallery', at: [-0.6, 1.55, -6.5] },
   ],
-  living: [],
+  living: [{ to: 'tv', at: [4.3, 2.05, -3.35] }],
+  tv: [],
   gallery: [
     { to: 'studio', at: [-1.7, 1.55, -9.6] },
     { to: 'desk', at: [0.5, 1.55, -10.8] },

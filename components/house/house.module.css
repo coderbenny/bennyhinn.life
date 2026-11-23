@@ -698,6 +698,13 @@ ol.panelList {
   }
 }
 
+/* The YouTube player over the TV's screen. */
+.tvPlayer {
+  display: block;
+  border: 0;
+  background: #000;
+}
+
 /* A role's achievements. */
 .panelBullets {
   display: grid;

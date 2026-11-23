@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Link from 'next/link';
 import Walkway from './Walkway';
@@ -17,7 +17,9 @@ import { setOnExit } from './terminalStore';
 import WallClock from './WallClock';
 import WallCalendar from './WallCalendar';
 import DeskMug from './DeskMug';
-import { play } from './sound';
+import SmartTv from './SmartTv';
+import { PLAYING, command as tvCommand, getTvState, markBlocked, subscribeTv } from './tvStore';
+import { onMutedChange, play } from './sound';
 import { CARDS } from './deskLayout';
 import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
@@ -119,6 +121,40 @@ export default function House({ onReady }) {
   useEffect(() => {
     if (card) play('card');
   }, [card]);
+
+  // The TV starts playing the first time the visitor comes into the living
+  // room (the click that brought them counts as permission to play), pauses
+  // when they leave, and carries on when they come back. If the browser
+  // still refuses sound, it plays muted and the card offers to unmute.
+  const tv = useSyncExternalStore(subscribeTv, getTvState, getTvState);
+  const inLiving = at === 'living' || at === 'tv';
+  const [tvOn, setTvOn] = useState(false);
+  useEffect(() => {
+    if (inLiving) setTvOn(true);
+    if (outside) setTvOn(false);
+  }, [inLiving, outside]);
+  useEffect(() => {
+    if (!tv.ready) return undefined;
+    if (!inLiving) {
+      tvCommand('pauseVideo');
+      return undefined;
+    }
+    tvCommand('playVideo');
+    const check = setTimeout(() => {
+      if (getTvState().playerState !== PLAYING) {
+        tvCommand('mute');
+        tvCommand('playVideo');
+        markBlocked(true);
+      }
+    }, 3000);
+    return () => clearTimeout(check);
+  }, [tv.ready, inLiving]);
+  useEffect(() => onMutedChange((m) => tvCommand(m ? 'mute' : 'unMute')), []);
+  const unmuteTv = useCallback(() => {
+    tvCommand('unMute');
+    tvCommand('playVideo');
+    markBlocked(false);
+  }, []);
 
   const go = useCallback(
     (id) => {
@@ -344,6 +380,7 @@ export default function House({ onReady }) {
           <WallClock visible={!outside} reducedMotion={reducedMotion} />
           <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
           <DeskMug visible={!outside} reducedMotion={reducedMotion} />
+          <SmartTv visible={!outside} on={tvOn} showing={at === 'tv' && !moving && !panelOpen} />
         </Suspense>
         <CameraRig target={target} onArrived={arrived} reducedMotion={reducedMotion} dragEnabled={!moving && at !== HOME && at !== null} />
       </Canvas>
@@ -446,6 +483,34 @@ export default function House({ onReady }) {
               <button ref={panelButton} type="button" className={styles.keyButton} onClick={openPanel}>
                 {room.open}
               </button>
+            )}
+            {room.also?.map((a) => (
+              <button key={a.to} type="button" className={styles.keyButton} onClick={() => go(a.to)}>
+                {a.label}
+              </button>
+            ))}
+            {inLiving && tv.blocked && (
+              <button type="button" className={styles.keyButton} onClick={unmuteTv}>
+                🔊 Unmute the TV
+              </button>
+            )}
+            {at === 'tv' && tv.ready && (
+              <>
+                <button type="button" className={styles.keyButton} onClick={() => tvCommand('previousVideo')} aria-label="Previous video">
+                  ⏮
+                </button>
+                <button
+                  type="button"
+                  className={styles.keyButton}
+                  onClick={() => tvCommand(tv.playerState === PLAYING ? 'pauseVideo' : 'playVideo')}
+                  aria-label={tv.playerState === PLAYING ? 'Pause' : 'Play'}
+                >
+                  {tv.playerState === PLAYING ? '⏸' : '▶'}
+                </button>
+                <button type="button" className={styles.keyButton} onClick={() => tvCommand('nextVideo')} aria-label="Next video">
+                  ⏭
+                </button>
+              </>
             )}
             {room.previous && (
               <>

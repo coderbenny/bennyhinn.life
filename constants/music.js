@@ -22,3 +22,10 @@ export const TRACKS = [
 ];
 
 export const trackUrl = (t) => `https://open.spotify.com/track/${t.spotifyId}`;
+
+// Benny's music videos, played on the TV in the living room.
+export const YOUTUBE_PLAYLIST = {
+  id: 'PLiyoQyqShHh315leq94E8wi9XD91GPudL',
+  title: 'Songs By Benny On The Beat',
+  url: 'https://www.youtube.com/playlist?list=PLiyoQyqShHh315leq94E8wi9XD91GPudL',
+};
