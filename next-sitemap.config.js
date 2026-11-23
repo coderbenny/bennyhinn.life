@@ -11,7 +11,7 @@ module.exports = {
   transform: async (config, path) => {
     let priority = 0.7;
     if (path === '/') priority = 1.0;
-    else if (path === '/blog') priority = 0.9;
+    else if (path === '/blog' || path === '/classic') priority = 0.9;
     else if (path.startsWith('/blog/')) priority = 0.8;
     else if (path === '/about' || path === '/contact') priority = 0.6;
     else if (path === '/privacy-policy' || path === '/terms') priority = 0.3;

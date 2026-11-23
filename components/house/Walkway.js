@@ -5,13 +5,17 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { EMAIL } from '@/constants/contact';
+import { getQuality } from './quality';
 
 // The house: the walkway and the rooms inside, modelled and lit in Blender
 // (scripts/blender/walkway.py) with the light baked into its textures. Everything is drawn unlit, so it looks
 // like the Cycles render and costs almost nothing to draw.
 // Blender (x, y, z) is three.js (x, z, -y).
 
-const MODEL = '/house/walkway.glb';
+// Phones get the same model with smaller textures (quality.js). This module
+// only ever loads in the browser (House is loaded without server rendering).
+const QUALITY = getQuality();
+const MODEL = QUALITY.model;
 const MAILBOX = new THREE.Vector3(-1.6, 1.19, 8.4);
 
 // The plant by the living-room window sways a little, as if in a draught.
@@ -117,7 +121,7 @@ export default function Walkway({ doorOpen, flagUp: flagRaised, interactive, onM
         o.visible = false; // replaced by the engraved plate below
       } else if (o.material.map) {
         const map = o.material.map;
-        map.anisotropy = 8;
+        map.anisotropy = QUALITY.anisotropy;
         // Foliage cards are single quads, seen from both sides.
         o.material = new THREE.MeshBasicMaterial({ map, side: name === 'Foliage' ? THREE.DoubleSide : THREE.FrontSide });
         // The plant is in the living room's mesh; the sway only touches vertices near it.

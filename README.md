@@ -106,6 +106,7 @@ npm run house            # all three steps below
 npm run house:model      # scripts/blender/walkway.py       -> art/walkway.blend
 npm run house:bake       # scripts/blender/bake_walkway.py  -> art/walkway-raw.glb (Cycles bake, about an hour)
 npm run house:compress   # gltf-transform                   -> public/house/walkway.glb
+npm run house:mobile     # gltf-transform, 1024 px textures -> public/house/walkway-mobile.glb
 ```
 
 `art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the model under 3 MB.
@@ -121,6 +122,10 @@ The desk's corkboard pins one card per role in `constants/experience.js` and a c
 The house makes a few soft sounds (the door, a book, a record, a card), made with the Web Audio API, only in answer to clicks; the Mute button beside "Skip to site" turns them off.
 
 `npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, that every track fits on the record wall and has its cover, and that the corkboard cards fit and the commit on the monitor is read correctly, and that the clock keeps Nairobi time and the calendar's months and data are right.
+
+Each device gets a quality level (`components/house/quality.js`): laptops and desktops draw at up to twice the screen's pixel density with antialiasing; tablets and small laptops at up to 1.5×; phones load `walkway-mobile.glb`, the same model with 1024 px textures (about a quarter of the GPU memory), at up to 1.5× and without antialiasing. The lighting is baked, so there are no shadows or lights to turn down. While the frame rate stays low, the house lowers its pixel density further. Add `?quality=low` (or `medium`, `high`) to the address to force a level, and `?fps` to show the frame rate, the level and the pixel density, for testing on a real phone.
+
+The house has no ads: AdSense loads on every page except `/`.
 
 In development, `window.__house` and `window.__houseCamera` let test scripts freeze the door and flag and place the camera.
 

@@ -2,9 +2,12 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { PerformanceMonitor } from '@react-three/drei';
 import Link from 'next/link';
 import Walkway from './Walkway';
 import Sky from './Sky';
+import { getQuality } from './quality';
+import { FpsBadge, FpsProbe, useFpsMeter } from './FpsMeter';
 import CameraRig from './CameraRig';
 import Hotspots from './Hotspots';
 import Bookshelf from './Bookshelf';
@@ -42,6 +45,11 @@ const WIDE_SCREEN = '(min-width: 768px)';
 export default function House({ onReady }) {
   const { target, goTo, back } = useSpotHistory();
   const [at, setAt] = useState(null);
+  // The device's quality level (quality.js); the pixel ratio starts at the
+  // level's highest and steps down while the frame rate stays low.
+  const [quality] = useState(getQuality);
+  const [dpr, setDpr] = useState(quality.dpr[1]);
+  const showFps = useFpsMeter();
   const [letterOpen, setLetterOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -320,10 +328,19 @@ export default function House({ onReady }) {
       <Canvas
         className="house-canvas"
         flat
-        dpr={[1, 2]}
+        dpr={Math.min(dpr, window.devicePixelRatio || 1)}
         camera={{ fov: SPOTS[target].fov, near: 0.1, far: 150, position: SPOTS[target].pos }}
-        gl={{ antialias: true }}
+        gl={{ antialias: quality.antialias, powerPreference: 'high-performance' }}
       >
+        <PerformanceMonitor
+          factor={1}
+          onChange={({ factor }) => {
+            const [low, high] = quality.dpr;
+            setDpr(Math.round((low + (high - low) * factor) * 4) / 4);
+          }}
+          onFallback={() => setDpr(quality.dpr[0])}
+        />
+        {showFps && <FpsProbe level={quality.level} />}
         <fog attach="fog" args={['#262d3d', 16, 38]} />
         <Sky />
         <Suspense fallback={null}>
@@ -398,6 +415,7 @@ export default function House({ onReady }) {
       </Canvas>
 
       <div ref={hotspotLayer} className={styles.hotspotLayer} />
+      {showFps && <FpsBadge />}
 
       {/* The books, for keyboards and screen readers: focusing one tips its
           book out and shows its name beside it. */}

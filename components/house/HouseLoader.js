@@ -62,6 +62,10 @@ export default function HouseLoader() {
 
   return (
     <div id="house" className={styles.root}>
+      {/* No ads in the house: AdSense isn't loaded here, but a visitor who
+          arrives from another page has it already, and its auto ads (anchor
+          bars, vignettes) would sit on top of the scene. */}
+      <style>{'ins.adsbygoogle,.google-auto-placed{display:none!important}'}</style>
       {/* First in the page, so "Skip to site" is the first thing Tab reaches. */}
       <div className={styles.chrome}>
         <span className={styles.name}>Benny Hinn</span>

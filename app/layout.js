@@ -3,7 +3,7 @@ import "./globals.css";
 import GlobalCursor from "@/components/GlobalCursor";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Footer from "@/components/Footer";
-import Script from "next/script";
+import AdSenseScript from "@/components/AdSenseScript";
 
 /* =========================
    Fonts (Performance First)
@@ -127,13 +127,8 @@ export default function RootLayout({ children }) {
         <main id="main-content">{children}</main>
         <Footer />
 
-        {/* Google AdSense — loaded after hydration so it never blocks LCP */}
-        <Script
-          id="adsbygoogle-init"
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4090506137434256"
-        />
+        {/* Google AdSense, on every page but the house */}
+        <AdSenseScript />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { Html } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { HOTSPOTS, SPOTS } from './spots';
 import styles from './house.module.css';
@@ -23,9 +24,10 @@ function clampedPosition(el, camera, size) {
 }
 
 export default function Hotspots({ spot, visible, onGo, layer }) {
+  const portrait = useThree((s) => s.size.width < s.size.height);
   if (!visible) return null;
   return HOTSPOTS[spot].map((h) => (
-    <Html key={h.to} position={h.at} center zIndexRange={[20, 10]} portal={layer} calculatePosition={clampedPosition}>
+    <Html key={h.to} position={(portrait && h.portraitAt) || h.at} center zIndexRange={[20, 10]} portal={layer} calculatePosition={clampedPosition}>
       <button type="button" className={styles.hotspot} onClick={() => onGo(h.to)}>
         <span className={styles.hotspotDot} aria-hidden="true" />
         {SPOTS[h.to].label}

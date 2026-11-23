@@ -36,6 +36,9 @@ export const SPOTS = {
     pos: [-0.6, EYE, -0.55],
     look: [-0.5, 1.35, -4.2],
     fov: 55,
+    // On a portrait phone, a step back and turned left, so the arrivals board
+    // fits beside the gallery opening.
+    portrait: { pos: [-0.6, EYE, -0.3], look: [-1.6, 1.45, -4.2] },
   },
   living: {
     label: 'Living room',
@@ -170,10 +173,13 @@ export const HOME = 'walkway';
 
 // Where each spot's hotspots sit in the scene: the doorway or object you
 // would walk towards. Back to the parent is a separate button, not a hotspot.
+// `portraitAt`, where given, replaces `at` on a portrait screen.
 export const HOTSPOTS = {
   walkway: [],
   entry: [
-    { to: 'living', at: [0.25, 1.55, -2.9] },
+    // On a portrait phone the opening is just off screen to the right, so its
+    // button sits at the edge; higher up, clear of the Gallery button.
+    { to: 'living', at: [0.25, 1.55, -2.9], portraitAt: [0.25, 2.2, -2.9] },
     { to: 'gallery', at: [-0.6, 1.55, -6.5] },
   ],
   // The TV is behind you at the shelf; the room card's Watch TV button leads there.
