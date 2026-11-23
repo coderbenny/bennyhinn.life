@@ -410,7 +410,7 @@ export const ROOMS = {
     Content: Corkboard,
   },
   monitor: {
-    line: COMMIT ? `Last commit, ${timeSince(COMMIT.date)}: ${COMMIT.message}` : 'The last change to this site.',
+    line: 'A terminal: type /help on the screen to see what it can do. There is a game in there.',
     open: 'About this commit',
     title: 'Latest commit',
     Content: Monitor,

@@ -112,10 +112,11 @@ export const SPOTS = {
     parent: 'desk',
     // Standing behind the chair, looking at the screen; aimed a little right
     // of it for the panel.
-    pos: [3.1, 1.55, -10.6],
-    look: [3.4, 1.45, -12.05],
+    // A little above eye height, so the chair's back stays below the screen.
+    pos: [3.1, 1.64, -10.6],
+    look: [3.4, 1.47, -12.05],
     // On a portrait phone, far enough back for the whole screen to fit.
-    portrait: { pos: [3.1, 1.6, -10.1], look: [3.1, 1.45, -12.05] },
+    portrait: { pos: [3.1, 1.75, -10.1], look: [3.1, 1.47, -12.05] },
     fov: 45,
   },
   // One spot in front of each frame, reached down the middle of the gallery.

@@ -12,6 +12,8 @@ import ProjectGallery from './ProjectGallery';
 import StudioRecords from './StudioRecords';
 import Corkboard from './Corkboard';
 import DeskMonitor from './DeskMonitor';
+import TerminalInput, { useTerminal } from './TerminalInput';
+import { setOnExit } from './terminalStore';
 import WallClock from './WallClock';
 import WallCalendar from './WallCalendar';
 import DeskMug from './DeskMug';
@@ -127,6 +129,17 @@ export default function House({ onReady }) {
   );
 
   const hotspotLayer = useRef(null);
+
+  // The desk terminal: `exit` steps back from the monitor; on a touch screen
+  // the text box waits for a tap on the screen, so the keyboard does not pop up.
+  const terminal = useRef(null);
+  const terminalMode = useTerminal().mode;
+  const [coarsePointer, setCoarsePointer] = useState(false);
+  useEffect(() => setCoarsePointer(window.matchMedia('(pointer: coarse)').matches), []);
+  useEffect(() => {
+    setOnExit(back);
+    return () => setOnExit(null);
+  }, [back]);
 
   // Where focus goes once a closed dialog's buttons are back on screen: set
   // when a dialog closes, used right after the next render (not the next
@@ -323,7 +336,11 @@ export default function House({ onReady }) {
             onSelect={pickCard}
             layer={hotspotLayer}
           />
-          <DeskMonitor visible={!outside} interactive={!moving && at === 'desk'} onSelect={() => go('monitor')} />
+          <DeskMonitor
+            visible={!outside}
+            interactive={!moving && (at === 'desk' || at === 'monitor')}
+            onSelect={() => (at === 'monitor' ? terminal.current?.focus() : go('monitor'))}
+          />
           <WallClock visible={!outside} reducedMotion={reducedMotion} />
           <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
           <DeskMug visible={!outside} reducedMotion={reducedMotion} />
@@ -402,6 +419,8 @@ export default function House({ onReady }) {
         </ul>
       )}
 
+      {at === 'monitor' && !moving && !panelOpen && <TerminalInput ref={terminal} autoFocus={!coarsePointer} />}
+
       {/* The corkboard cards, for keyboards and screen readers. */}
       {at === 'corkboard' && !moving && !panelOpen && (
         <ul className={styles.srOnly} aria-label="Cards on the corkboard">
@@ -415,7 +434,8 @@ export default function House({ onReady }) {
         </ul>
       )}
 
-      {room && !panelOpen && (
+      {/* On a phone, Snake needs the whole screen and the arrow pad: the room card steps aside. */}
+      {room && !panelOpen && !(coarsePointer && at === 'monitor' && terminalMode === 'snake') && (
         <div className={styles.card}>
           <h2 ref={roomHeading} tabIndex={-1} className={styles.cardTitle}>
             {SPOTS[at].label}

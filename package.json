@@ -13,7 +13,7 @@
     "house:bake": "blender -b art/walkway.blend -P scripts/blender/bake_walkway.py --",
     "house:compress": "gltf-transform resize art/walkway-raw.glb art/walkway-sized.glb --pattern \"Ground\" --width 2048 --height 2048 && gltf-transform optimize art/walkway-sized.glb public/house/walkway.glb --compress meshopt --texture-compress webp --texture-size 4096 --simplify false --join false --flatten false",
     "house": "npm run house:model && npm run house:bake && npm run house:compress",
-    "test:house": "node --no-warnings components/house/spots.test.mjs && node --no-warnings components/house/books.test.mjs && node --no-warnings components/house/galleryLayout.test.mjs && node --no-warnings components/house/recordWall.test.mjs && node --no-warnings components/house/deskLayout.test.mjs && node --no-warnings components/house/wallTime.test.mjs",
+    "test:house": "node --no-warnings components/house/spots.test.mjs && node --no-warnings components/house/books.test.mjs && node --no-warnings components/house/galleryLayout.test.mjs && node --no-warnings components/house/recordWall.test.mjs && node --no-warnings components/house/deskLayout.test.mjs && node --no-warnings components/house/wallTime.test.mjs && node --no-warnings components/house/terminal.test.mjs",
     "house:frames": "node --no-warnings scripts/house-frames.mjs",
     "house:records": "node --no-warnings scripts/house-records.mjs",
     "house:contributions": "node --no-warnings scripts/house-contributions.mjs"

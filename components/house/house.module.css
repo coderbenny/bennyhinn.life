@@ -628,6 +628,76 @@ ol.panelList {
   color: #3f372c;
 }
 
+/* The desk terminal's text box: what is typed shows on the 3D screen, so the
+   box itself is invisible, but it still takes focus and the phone keyboard.
+   16px stops iOS zooming in when it is focused. */
+.terminalInput {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* Snake's arrow pad, on touch screens only, where the room card was. */
+.snakePad {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .snakePad {
+    position: fixed;
+    z-index: 30;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(3, 52px);
+    grid-template-rows: repeat(3, 52px);
+    gap: 6px;
+  }
+
+  .snakePad button {
+    border: 1px solid rgba(255, 244, 230, 0.3);
+    border-radius: 12px;
+    background: rgba(20, 22, 30, 0.75);
+    color: #f4efe6;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .padUp {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .padLeft {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .padStop {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 0.75rem !important;
+  }
+
+  .padRight {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  .padDown {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
 /* A role's achievements. */
 .panelBullets {
   display: grid;
