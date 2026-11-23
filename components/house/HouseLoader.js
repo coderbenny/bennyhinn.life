@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import SoundToggle from './SoundToggle';
 import styles from './house.module.css';
 
 const House = dynamic(() => import('./House'), { ssr: false, loading: () => null });
@@ -64,9 +65,12 @@ export default function HouseLoader() {
       {/* First in the page, so "Skip to site" is the first thing Tab reaches. */}
       <div className={styles.chrome}>
         <span className={styles.name}>Benny Hinn</span>
-        <Link href="/classic" className={styles.skip}>
-          Skip to site
-        </Link>
+        <span className={styles.chromeActions}>
+          <Link href="/classic" className={styles.skip}>
+            Skip to site
+          </Link>
+          <SoundToggle />
+        </span>
       </div>
       <House onReady={() => setReady(true)} />
       <div className={`${styles.curtain} ${ready ? styles.curtainUp : ''}`} aria-hidden="true" />

@@ -64,6 +64,36 @@
   background: rgba(20, 22, 30, 0.75);
 }
 
+/* "Skip to site" first in Tab order, the mute button beside it. */
+.chromeActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.soundToggle {
+  pointer-events: auto;
+  font: inherit;
+  font-size: 0.8rem;
+  color: rgba(255, 244, 230, 0.85);
+  border: 1px solid rgba(255, 244, 230, 0.25);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  background: rgba(20, 22, 30, 0.45);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.soundToggle:hover,
+.soundToggle:focus-visible {
+  border-color: rgba(255, 176, 102, 0.8);
+  background: rgba(20, 22, 30, 0.75);
+}
+
+.soundToggle[aria-pressed='true'] {
+  color: rgba(255, 244, 230, 0.6);
+}
+
 /* Plain content: the page when the house cannot load. */
 .content {
   max-width: 46rem;
@@ -647,6 +677,7 @@ ol.panelList {
 /* Touch screens: every control at least 44px tall, so thumbs hit what they aim for. */
 @media (pointer: coarse) {
   .skip,
+  .soundToggle,
   .keyButton,
   .copy,
   .hotspot,
