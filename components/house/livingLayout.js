@@ -29,6 +29,7 @@ export function playerUrl(playlistId, { muted, origin }) {
     enablejsapi: '1',
     rel: '0',
     modestbranding: '1',
+    controls: '0', // the room card has previous, pause and next
     origin,
   });
   return `${YOUTUBE_ORIGIN}/embed/videoseries?${q}`;

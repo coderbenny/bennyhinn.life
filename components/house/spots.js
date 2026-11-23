@@ -176,7 +176,8 @@ export const HOTSPOTS = {
     { to: 'living', at: [0.25, 1.55, -2.9] },
     { to: 'gallery', at: [-0.6, 1.55, -6.5] },
   ],
-  living: [{ to: 'tv', at: [4.3, 2.05, -3.35] }],
+  // The TV is behind you at the shelf; the room card's Watch TV button leads there.
+  living: [],
   tv: [],
   gallery: [
     { to: 'studio', at: [-1.7, 1.55, -9.6] },
