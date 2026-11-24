@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPosts } from '@/lib/markdown';
 import ShareButton from '@/components/ShareButton';
+import { SHARE_IMAGE } from '@/constants/seo';
 
 export const metadata = {
   title: 'Blog | Benny Hinn Mathew',
@@ -14,14 +15,7 @@ export const metadata = {
     description: 'Thoughts, technical deep dives, and reflections on building scalable software and AI systems.',
     url: 'https://bennyhinn.life/blog',
     siteName: 'Benny Hinn Mathew',
-    images: [
-      {
-        url: '/benny-logo.jpeg',
-        width: 1200,
-        height: 630,
-        alt: 'Benny Hinn Mathew Blog',
-      },
-    ],
+    images: [SHARE_IMAGE],
     locale: 'en_KE',
     type: 'website',
   },
@@ -29,7 +23,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Blog | Benny Hinn Mathew',
     description: 'Thoughts, technical deep dives, and reflections on building scalable software and AI systems.',
-    images: ['/benny-logo.jpeg'],
+    images: [SHARE_IMAGE.url],
   },
 };
 

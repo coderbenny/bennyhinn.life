@@ -8,6 +8,7 @@ import {
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ShareButton from '@/components/ShareButton';
+import { SHARE_IMAGE_URL } from '@/constants/seo';
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }) {
   }
 
   const url = `https://bennyhinn.life/blog/${slug}`;
-  const defaultImage = 'https://bennyhinn.life/benny-logo.jpeg';
+  const defaultImage = SHARE_IMAGE_URL;
   const imageUrl = post.meta.image
     ? post.meta.image.startsWith('http')
       ? post.meta.image
@@ -76,7 +77,7 @@ export default async function BlogPost({ params }) {
     ? post.meta.image.startsWith('http')
       ? post.meta.image
       : `https://bennyhinn.life${post.meta.image}`
-    : 'https://bennyhinn.life/benny-logo.jpeg';
+    : SHARE_IMAGE_URL;
 
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -4,6 +4,7 @@ import GlobalCursor from "@/components/GlobalCursor";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Footer from "@/components/Footer";
 import AdSenseScript from "@/components/AdSenseScript";
+import { SHARE_IMAGE } from "@/constants/seo";
 
 /* =========================
    Fonts (Performance First)
@@ -79,14 +80,7 @@ export const metadata = {
       "Full Stack software engineer building scalable, production-ready web systems.",
     url: "https://bennyhinn.life",
     siteName: "Benny Hinn Mathew",
-    images: [
-      {
-        url: "/benny-logo.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Benny Hinn Mathew Portfolio",
-      },
-    ],
+    images: [SHARE_IMAGE],
     locale: "en_KE",
     type: "website",
   },
@@ -96,7 +90,7 @@ export const metadata = {
     title: "Benny Hinn Mathew | Software Engineer",
     description:
       "Building scalable full-stack systems with modern web technologies.",
-    images: ["/benny-logo.jpeg"],
+    images: [SHARE_IMAGE.url],
   },
 
   category: "technology",

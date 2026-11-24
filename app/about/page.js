@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import PageShell from '@/components/PageShell';
+import { SHARE_IMAGE } from '@/constants/seo';
 
 export const metadata = {
   title: 'About',
@@ -12,6 +13,7 @@ export const metadata = {
       'Who writes this site: a Nairobi-based VAS and full-stack engineer working on telecom services, AI workflows and marketplace platforms.',
     url: 'https://bennyhinn.life/about',
     type: 'profile',
+    images: [SHARE_IMAGE],
   },
 };
 

@@ -1,5 +1,6 @@
 import PageShell from '@/components/PageShell';
 import ContactForm from '@/components/ContactForm';
+import { SHARE_IMAGE } from '@/constants/seo';
 
 export const metadata = {
   title: 'Contact',
@@ -11,6 +12,7 @@ export const metadata = {
     description: 'Email, phone, WhatsApp or send a message directly.',
     url: 'https://bennyhinn.life/contact',
     type: 'website',
+    images: [SHARE_IMAGE],
   },
 };
 
