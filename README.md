@@ -91,6 +91,7 @@ bennyhinn.life/
 │   └── ClassicHome.js        # The classic page
 ├── constants/                # Content shared by the house and the classic page (projects, skills, experience, music, contact)
 ├── content/blog/             # Blog posts in Markdown
+├── party/                    # The Snake party room server (Cloudflare Durable Objects), see party/README.md
 └── public/house/             # Compressed 3D models served to the browser
 ```
 

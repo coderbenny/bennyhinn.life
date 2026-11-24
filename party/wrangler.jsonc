@@ -1,0 +1,16 @@
+// The Snake party room server (see README.md). Deploy: npm run deploy (in party/).
+{
+  "name": "bennyhinn-snake-party",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "durable_objects": {
+    "bindings": [{ "name": "SnakeParty", "class_name": "SnakeParty" }]
+  },
+  // The free plan only runs SQLite-backed Durable Objects.
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SnakeParty"] }],
+  "vars": {
+    // The pages allowed to open rooms (browsers send their Origin).
+    "ALLOWED_ORIGINS": "https://bennyhinn.life,https://www.bennyhinn.life,http://localhost:3000"
+  },
+  "observability": { "enabled": true }
+}

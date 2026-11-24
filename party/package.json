@@ -1,0 +1,17 @@
+{
+  "name": "bennyhinn-snake-party",
+  "private": true,
+  "type": "module",
+  "description": "The Snake party room server: one Cloudflare Durable Object per game room, built with PartyServer.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --no-warnings src/room.test.mjs"
+  },
+  "dependencies": {
+    "partyserver": "0.5.10"
+  },
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
+}
