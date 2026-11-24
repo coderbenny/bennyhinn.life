@@ -39,5 +39,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Blender working files (rebuilt by scripts/blender)
+# Blender working files and the scripts that build them: kept on Benny's
+# machine only. The repo holds just the exported models (public/house/*.glb).
 /art/
+/scripts/blender/

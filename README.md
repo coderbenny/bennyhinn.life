@@ -91,25 +91,24 @@ bennyhinn.life/
 │   └── ClassicHome.js        # The classic page
 ├── constants/                # Content shared by the house and the classic page (projects, skills, experience, music, contact)
 ├── content/blog/             # Blog posts in Markdown
-├── scripts/blender/          # Blender scripts that model and bake the house
 └── public/house/             # Compressed 3D models served to the browser
 ```
 
 ## 🏠 The 3D house
 
-The scene is modelled and lit in Blender from Python scripts, with the lighting baked into textures. Nothing is modelled by hand, so the whole asset can be rebuilt from the scripts.
+The scene is modelled and lit in Blender from Python scripts, with the lighting baked into textures. The scripts (`scripts/blender/`) and Blender's working files (`art/`) stay on the author's machine and are not in this repository; only the exported models in `public/house/` are.
 
 Requirements: Blender on your `PATH` (`brew install --cask blender`) and the dev dependencies (`npm install`).
 
 ```bash
-npm run house            # all three steps below
+npm run house            # all the steps below
 npm run house:model      # scripts/blender/walkway.py       -> art/walkway.blend
 npm run house:bake       # scripts/blender/bake_walkway.py  -> art/walkway-raw.glb (Cycles bake, about an hour)
 npm run house:compress   # gltf-transform                   -> public/house/walkway.glb
 npm run house:mobile     # gltf-transform, 1024 px textures -> public/house/walkway-mobile.glb
 ```
 
-`art/` holds the Blender working files and is not committed, since the scripts rebuild it. Only `public/house/*.glb` is committed. Keep the model under 3 MB.
+Keep the model under 3 MB.
 
 The camera moves between spots (outside, entry, living room, gallery, studio, desk) defined in `components/house/spots.js`. Each spot has its own address, such as `/?room=studio`. Positions in that file are in three.js coordinates: a Blender point (x, y, z) is (x, z, -y) there.
 
