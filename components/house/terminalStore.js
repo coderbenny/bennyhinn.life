@@ -6,6 +6,7 @@
 import { COMMIT, timeSince } from './deskLayout';
 import { WELCOME, run } from './terminal';
 import { newGame, step, stepMs, turn } from './snake';
+import { openParty } from './partyStore';
 
 const MAX_LINES = 200;
 const BEST_KEY = 'house:snake-best';
@@ -126,5 +127,6 @@ export function submit() {
   }
   set({ lines: [...s.lines, ...lines].slice(-MAX_LINES), input: '' });
   if (action === 'snake') startSnake();
+  if (action === 'party') openParty({ create: true });
   if (action === 'exit') onExit?.();
 }

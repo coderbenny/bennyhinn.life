@@ -22,6 +22,7 @@ export const COMMANDS = [
   { name: 'whoami', about: 'who I am, in a few lines' },
   { name: 'contact', about: 'how to reach me' },
   { name: 'snake', about: 'play Snake on this screen' },
+  { name: 'party', about: 'race up to 4 friends at Snake' },
   { name: 'clear', about: 'clear the screen' },
   { name: 'exit', about: 'step back from the desk' },
 ];
@@ -51,7 +52,7 @@ function contact() {
 
 /**
  * Runs one typed line. Returns { lines, action } where action is one of
- * 'snake', 'clear', 'exit' or null.
+ * 'snake', 'party', 'clear', 'exit' or null.
  */
 export function run(input) {
   const typed = input.trim();
@@ -68,6 +69,8 @@ export function run(input) {
       return { lines: [echo, ...contact()], action: null };
     case 'snake':
       return { lines: [echo, dim('Starting Snake... arrows or WASD to steer, Esc to stop.')], action: 'snake' };
+    case 'party':
+      return { lines: [echo, dim('Starting a Snake party... pick a name, then invite your friends.')], action: 'party' };
     case 'clear':
       return { lines: [], action: 'clear' };
     case 'exit':

@@ -7,11 +7,10 @@
 
 import { routePartykitRequest } from 'partyserver';
 import { SnakeParty } from './server.js';
+// Room codes are made by the site; both sides share the format.
+import { ROOM_CODE } from '../../components/house/partyLink.js';
 
 export { SnakeParty };
-
-/** Room codes: 8 characters from an alphabet without look-alikes (no 0/o, 1/l/i). */
-export const ROOM_CODE = /^[23456789abcdefghjkmnpqrstuvwxyz]{8}$/;
 
 const CONNECTS_PER_MINUTE = 30;
 const recent = new Map(); // address -> [minute, count]; per Worker instance, a best-effort cap

@@ -119,6 +119,8 @@ The studio hangs one vinyl record per track in `constants/music.js` on its back 
 
 The desk's corkboard pins one card per role in `constants/experience.js` and a contact card from `constants/contact.js` (`components/house/deskLayout.js`). Its monitor shows the site's latest commit, which `next.config.mjs` reads from git at build time. The wall calendar beside it shades each day by Benny's public GitHub contributions, which `npm run house:contributions` saves to `public/house/contributions.json`; it runs before every build and falls back to this repo's commits if GitHub cannot be reached.
 
+The desk terminal's `/party` starts a Snake party: up to five players race the same game, each on their own screen, after a 3-2-1 countdown. The invite link (`/?room=monitor&party=<code>`) opens the house straight at the monitor. The rooms run on a small Cloudflare server in `party/` (see `party/README.md`); the site finds it at `NEXT_PUBLIC_PARTY_HOST`, or at `localhost:8787` in development (`cd party && npm run dev`).
+
 The house makes a few soft sounds (the door, a book, a record, a card), made with the Web Audio API, only in answer to clicks; the Mute button beside "Skip to site" turns them off.
 
 `npm run test:house` checks the routes between rooms, that every skill fits on the shelf, that every project fits on the gallery walls and has its picture, that every track fits on the record wall and has its cover, and that the corkboard cards fit and the commit on the monitor is read correctly, and that the clock keeps Nairobi time and the calendar's months and data are right.

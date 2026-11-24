@@ -14,6 +14,7 @@ for (const c of COMMANDS) assert.ok(help.lines.some((l) => l.text.includes(`/${c
 assert.ok(run('whoami').lines.some((l) => l.text.includes('Benny Hinn Mathew')));
 assert.ok(run('contact').lines.some((l) => l.text.includes('info@bennyhinn.life')));
 assert.equal(run('/snake').action, 'snake');
+assert.equal(run('/party').action, 'party');
 assert.equal(run('clear').action, 'clear');
 assert.equal(run('exit').action, 'exit');
 assert.equal(run('').lines.length, 1);

@@ -32,7 +32,9 @@ import { BOOKS } from './shelf';
 import LetterPanel from './LetterPanel';
 import RoomPanel from './RoomPanel';
 import { ROOMS, cardTitle } from './RoomContent';
-import { FRAMES, HOME, RECORDS, SPOTS } from './spots';
+import { FRAMES, HOME, RECORDS, SPOTS, spotUrl } from './spots';
+import PartyPanel, { useParty } from './PartyPanel';
+import { INVITE, openParty } from './partyStore';
 import useSpotHistory from './useSpotHistory';
 import styles from './house.module.css';
 
@@ -182,6 +184,20 @@ export default function House({ onReady }) {
   // the text box waits for a tap on the screen, so the keyboard does not pop up.
   const terminal = useRef(null);
   const terminalMode = useTerminal().mode;
+
+  // A Snake party (PartyPanel.js): an invite link opens the party at the
+  // monitor, and while one is on, the monitor's address carries its code, so
+  // a reload or a shared link comes back to it.
+  const party = useParty();
+  const partyOn = party.status !== 'idle';
+  useEffect(() => {
+    if (INVITE) openParty({ code: INVITE });
+  }, []);
+  useEffect(() => {
+    if (target !== 'monitor') return;
+    const url = spotUrl('monitor') + (partyOn && party.code ? `&party=${party.code}` : '');
+    if (window.location.search !== url.slice(url.indexOf('?'))) window.history.replaceState(window.history.state, '', url);
+  }, [target, partyOn, party.code]);
   const [coarsePointer, setCoarsePointer] = useState(false);
   useEffect(() => setCoarsePointer(window.matchMedia('(pointer: coarse)').matches), []);
   useEffect(() => {
@@ -492,7 +508,14 @@ export default function House({ onReady }) {
         </ul>
       )}
 
-      {at === 'monitor' && !moving && !panelOpen && <TerminalInput ref={terminal} autoFocus={!coarsePointer} />}
+      {at === 'monitor' && !moving && !panelOpen && !partyOn && <TerminalInput ref={terminal} autoFocus={!coarsePointer} />}
+      {at === 'monitor' && !moving && !panelOpen && <PartyPanel />}
+      {/* Walked away mid-party: a way back to it. */}
+      {partyOn && at !== 'monitor' && !moving && (
+        <button type="button" className={styles.partyReturn} onClick={() => go('monitor')}>
+          <span aria-hidden="true">🐍 </span>Snake party: back to the desk
+        </button>
+      )}
 
       {/* The drum pads, for screen readers (keyboards also have the letter keys). */}
       {at === 'beats' && !moving && (
@@ -521,7 +544,8 @@ export default function House({ onReady }) {
       )}
 
       {/* On a phone, Snake needs the whole screen and the arrow pad: the room card steps aside. */}
-      {room && !panelOpen && !(coarsePointer && at === 'monitor' && terminalMode === 'snake') && (
+      {/* At the monitor during a party, the party panel takes the card's place. */}
+      {room && !panelOpen && !(coarsePointer && at === 'monitor' && terminalMode === 'snake') && !(at === 'monitor' && partyOn) && (
         <div className={styles.card}>
           <h2 ref={roomHeading} tabIndex={-1} className={styles.cardTitle}>
             {SPOTS[at].label}

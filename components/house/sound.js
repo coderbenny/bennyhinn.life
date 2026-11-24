@@ -157,6 +157,20 @@ const SOUNDS = {
     hiss(t, { duration: 0.02, type: 'highpass', freq: 2500, gain: 0.2, attack: 0.002 });
     hiss(t + 0.03, { duration: 0.14, freq: 2800, q: 0.8, gain: 0.12, attack: 0.02 });
   },
+  // Snake party: someone joins (a bright two-note pop).
+  join(t) {
+    tone(t, { freq: 660, to: 880, duration: 0.09, gain: 0.16, type: 'triangle' });
+    tone(t + 0.08, { freq: 990, to: 1320, duration: 0.14, gain: 0.14, type: 'triangle' });
+  },
+  // The countdown: 3, 2, 1...
+  tick(t) {
+    tone(t, { freq: 740, duration: 0.14, gain: 0.22, type: 'square' });
+  },
+  // ...go! An octave up, with a fifth on top.
+  go(t) {
+    tone(t, { freq: 1480, duration: 0.32, gain: 0.2, type: 'square' });
+    tone(t, { freq: 2220, duration: 0.32, gain: 0.08, type: 'triangle' });
+  },
 };
 
 /** Plays one of the sounds above, unless muted or audio is unavailable. */

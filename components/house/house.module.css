@@ -828,3 +828,392 @@ ol.panelList {
     overflow: hidden;
   }
 }
+
+/* ---- Snake party (PartyPanel.js) ----------------------------------------
+   Lively on purpose: players pop in with their colour, the host's Start
+   breathes once the room is ready, the feed slides in, and the countdown
+   bursts over the whole scene. Reduced motion keeps it all still. */
+.partyPanel {
+  position: absolute;
+  z-index: 35;
+  right: 1.4rem;
+  bottom: 1.4rem;
+  width: min(calc(100vw - 2rem), 25rem);
+  max-height: calc(100dvh - 7rem);
+  overflow-y: auto;
+  padding: 1.1rem 1.2rem 1.2rem;
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(22, 27, 34, 0.9), rgba(13, 17, 23, 0.92));
+  border: 1px solid rgba(126, 231, 135, 0.28);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  color: rgba(240, 246, 252, 0.92);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: partyIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@keyframes partyIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+}
+
+.partyTitle {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #7ee787, #58a6ff, #f778ba, #ffa657);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.partyLead {
+  margin: 0 0 0.8rem;
+  color: rgba(240, 246, 252, 0.75);
+}
+
+.partyForm {
+  display: grid;
+}
+
+.partyLabel {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8b949e;
+}
+
+.partyInput,
+.partyLink {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 16px; /* no zoom on iPhones */
+  color: #f0f6fc;
+  background: rgba(1, 4, 9, 0.6);
+  border: 1px solid rgba(240, 246, 252, 0.18);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  outline: none;
+}
+
+.partyInput:focus,
+.partyLink:focus {
+  border-color: #7ee787;
+  box-shadow: 0 0 0 3px rgba(126, 231, 135, 0.22);
+}
+
+.partyLink {
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: 0.8rem;
+  color: #c9d1d9;
+}
+
+.partyError {
+  margin: 0.5rem 0 0;
+  color: #ff7b72;
+}
+
+.partyWarn {
+  margin: 0.8rem 0 0;
+  color: #e3b341;
+  font-size: 0.82rem;
+}
+
+.partyActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.partyActions .partyLead {
+  margin: 0;
+  flex: 1;
+}
+
+.partyPrimary {
+  color: #0d1117;
+  font-weight: 700;
+  background: #7ee787;
+  border-color: #7ee787;
+}
+
+.partyPrimary:hover,
+.partyPrimary:focus-visible {
+  background: #a5f0ab;
+  border-color: #fff;
+}
+
+.partyPrimary:disabled {
+  cursor: default;
+  color: #8b949e;
+  background: rgba(48, 54, 61, 0.7);
+  border-color: rgba(240, 246, 252, 0.15);
+}
+
+/* The host's Start, once there are enough players: it breathes. */
+.partyPrimary[data-ready] {
+  animation: partyBreathe 1.6s ease-in-out infinite;
+}
+
+@keyframes partyBreathe {
+  50% {
+    box-shadow: 0 0 0 7px rgba(126, 231, 135, 0.18), 0 0 26px rgba(126, 231, 135, 0.45);
+  }
+}
+
+.partyInvite {
+  margin: 0.4rem 0 0.9rem;
+}
+
+.partyLinkRow {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.partyPlayers {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A player: their colour, a wiggling stripe, their name; popping in on arrival. */
+.partyChip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--player) 14%, rgba(1, 4, 9, 0.55));
+  border: 1px solid color-mix(in srgb, var(--player) 55%, transparent);
+  animation: partyPop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.partyChip[data-away] {
+  opacity: 0.5;
+  filter: grayscale(0.6);
+}
+
+@keyframes partyPop {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateX(-12px);
+  }
+}
+
+.partyChipSnake {
+  flex: none;
+  width: 2.2rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: repeating-linear-gradient(90deg, var(--player) 0 0.45rem, color-mix(in srgb, var(--player) 55%, #000) 0.45rem 0.55rem);
+  background-size: 1.1rem 100%;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--player) 60%, transparent);
+  animation: partySlither 0.9s linear infinite;
+}
+
+@keyframes partySlither {
+  to {
+    background-position: 1.1rem 0;
+  }
+}
+
+.partyChipName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #f0f6fc;
+}
+
+.partyBadge {
+  flex: none;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(240, 246, 252, 0.7);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(240, 246, 252, 0.08);
+}
+
+.partySlot {
+  padding: 0.45rem 0.7rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(240, 246, 252, 0.14);
+  color: rgba(240, 246, 252, 0.32);
+  font-size: 0.82rem;
+}
+
+/* The countdown: huge, over everything, each number bursting in. On wider
+   screens the monitor itself is big enough to carry it (DeskMonitor.js), so
+   this is for phones, where the monitor is small. */
+@media (min-width: 768px) {
+  .partyCountdown {
+    display: none !important;
+  }
+}
+
+.partyCountdown {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.partyCountdownNumber {
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: min(34vmin, 16rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(255, 201, 64, 0.75), 0 8px 30px rgba(0, 0, 0, 0.6);
+  animation: partyBurst 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.partyCountdownNumber[data-go] {
+  color: #7ee787;
+  text-shadow: 0 0 50px rgba(126, 231, 135, 0.9), 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes partyBurst {
+  from {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+  22% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.75;
+    transform: scale(0.9);
+  }
+}
+
+/* What's happening: lines slide in under the top bar, in the player's colour. */
+.partyFeed {
+  position: fixed;
+  z-index: 45;
+  top: 4.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  width: min(calc(100vw - 2rem), 26rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.partyFeedItem {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f0f6fc;
+  background: rgba(13, 17, 23, 0.85);
+  border: 1px solid color-mix(in srgb, var(--player, #7ee787) 70%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--player, #7ee787) 35%, transparent);
+  animation: partySlide 0.4s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.partyFeedItem[data-kind='golden'] {
+  border-color: #ffc940;
+  box-shadow: 0 0 22px rgba(255, 201, 64, 0.55);
+}
+
+@keyframes partySlide {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.92);
+  }
+}
+
+.partyTouchOnly {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .partyTouchOnly {
+    display: inline;
+  }
+}
+
+/* Walked away mid-party: the way back. */
+.partyReturn {
+  position: absolute;
+  z-index: 35;
+  left: 50%;
+  bottom: 1.4rem;
+  transform: translateX(-50%);
+  min-height: 44px;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #7ee787;
+  background: rgba(13, 17, 23, 0.88);
+  color: #f0f6fc;
+  font-weight: 600;
+  cursor: pointer;
+  animation: partyBreathe 1.6s ease-in-out infinite;
+}
+
+/* Phones: the panel sits along the bottom, compact, the monitor above it.
+   The empty "waiting" rows go (the count says how many places are left). */
+@media (max-width: 767px) {
+  .partyPanel {
+    left: 50%;
+    right: auto;
+    bottom: 0.8rem;
+    transform: translateX(-50%);
+    max-height: 52dvh;
+    padding: 0.85rem 0.95rem 0.95rem;
+    animation: none;
+  }
+  .partySlot {
+    display: none;
+  }
+  .partyChip {
+    padding: 0.3rem 0.6rem;
+  }
+  .partyInvite {
+    margin-bottom: 0.6rem;
+  }
+  .partyActions {
+    margin-top: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partyPanel,
+  .partyChip,
+  .partyChipSnake,
+  .partyPrimary[data-ready],
+  .partyFeedItem,
+  .partyReturn {
+    animation: none;
+  }
+  .partyCountdownNumber {
+    animation: none;
+    opacity: 1;
+  }
+}
