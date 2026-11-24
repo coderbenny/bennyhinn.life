@@ -81,7 +81,7 @@ const TerminalInput = forwardRef(function TerminalInput({ autoFocus }, ref) {
         onBlur={() => setFocused(false)}
       />
       <div className={styles.srOnly} aria-live="polite">
-        {t.mode === 'snake' ? (t.game?.over ? `Game over. ${t.game.score} eaten. Press Enter to play again, Escape to stop.` : 'Snake is running.') : last}
+        {t.mode === 'snake' ? (t.game?.over ? `Game over. ${t.game.score} points. Press Enter to play again, Escape to stop.` : 'Snake is running.') : last}
       </div>
       {t.mode === 'snake' && (
         <div className={styles.snakePad} role="group" aria-label="Steer the snake">

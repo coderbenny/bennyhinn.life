@@ -82,11 +82,12 @@ function tick() {
   const best = Math.max(s.best, game.score);
   if (best > s.best) saveBest(best);
   set({ game, best });
-  if (!game.over) timer = setTimeout(tick, stepMs(game.score));
+  if (!game.over) timer = setTimeout(tick, stepMs(game.eaten));
 }
 
 export function startSnake() {
   clearTimeout(timer);
+  // A fresh random seed every game (newGame's default).
   set({ mode: 'snake', game: newGame(), input: '' });
   timer = setTimeout(tick, stepMs(0));
 }
@@ -100,7 +101,7 @@ export function stopSnake() {
   set({
     mode: 'shell',
     game: null,
-    lines: [...s.lines, { kind: 'dim', text: `Snake: ${score} eaten (best ${s.best}).` }].slice(-MAX_LINES),
+    lines: [...s.lines, { kind: 'dim', text: `Snake: ${score} points (best ${s.best}).` }].slice(-MAX_LINES),
   });
 }
 

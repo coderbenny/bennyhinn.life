@@ -84,7 +84,7 @@ function drawShell(ctx, t, cursorOn) {
 
 function drawSnake(ctx, t) {
   const { width: w, height: h } = ctx.canvas;
-  titleBar(ctx, w, `snake — ${t.game.score} eaten · best ${t.best}`);
+  titleBar(ctx, w, `snake — ${t.game.score} points · best ${t.best}`);
   const top = 70;
   const cell = Math.min((w - 40) / GRID.cols, (h - top - 16) / GRID.rows);
   const ox = (w - cell * GRID.cols) / 2;
@@ -92,11 +92,21 @@ function drawSnake(ctx, t) {
   ctx.strokeStyle = '#30363d';
   ctx.lineWidth = 2;
   ctx.strokeRect(ox - 2, oy - 2, cell * GRID.cols + 4, cell * GRID.rows + 4);
-  const { snake, food, over } = t.game;
+  const { snake, food, golden, over } = t.game;
   if (food) {
-    ctx.fillStyle = '#ff7b72';
+    const fx = ox + (food[0] + 0.5) * cell;
+    const fy = oy + (food[1] + 0.5) * cell;
+    if (golden) {
+      // A golden fruit (worth GOLDEN.points): a halo that breathes with the steps.
+      const pulse = 0.5 + 0.5 * Math.sin(t.game.steps * 0.9);
+      ctx.fillStyle = `rgba(255, 196, 64, ${0.18 + 0.22 * pulse})`;
+      ctx.beginPath();
+      ctx.arc(fx, fy, cell * (0.62 + 0.12 * pulse), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = golden ? '#ffc940' : '#ff7b72';
     ctx.beginPath();
-    ctx.arc(ox + (food[0] + 0.5) * cell, oy + (food[1] + 0.5) * cell, cell * 0.38, 0, Math.PI * 2);
+    ctx.arc(fx, fy, cell * (golden ? 0.42 : 0.38), 0, Math.PI * 2);
     ctx.fill();
   }
   snake.forEach(([x, y], i) => {
@@ -112,7 +122,7 @@ function drawSnake(ctx, t) {
     ctx.fillText(t.game.won ? 'YOU WIN' : 'GAME OVER', w / 2, h / 2 - 10);
     ctx.fillStyle = '#c9d1d9';
     ctx.font = `400 28px ${MONO}`;
-    ctx.fillText(`${t.game.score} eaten · Enter to play again · Esc to stop`, w / 2, h / 2 + 40);
+    ctx.fillText(`${t.game.score} points · Enter to play again · Esc to stop`, w / 2, h / 2 + 40);
     ctx.textAlign = 'left';
   }
 }
