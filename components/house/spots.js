@@ -54,11 +54,13 @@ export const SPOTS = {
   tv: {
     label: 'TV',
     parent: 'living',
-    // Sitting on the front of the sofa, eyes at seated height, facing the TV.
-    pos: [2.75, 1.28, -3.35],
-    look: [4.4, 1.55, -3.35],
+    // Sitting forward on the sofa, looking straight ahead, so the screen is
+    // seen square on (the player laid over it is a flat rectangle) and sits a
+    // little above the middle, clear of the room card.
+    pos: [2.75, 1.4, -3.35],
+    look: [4.4, 1.4, -3.35],
     // On a portrait phone, standing behind the sofa so the whole screen fits.
-    portrait: { pos: [1.75, 1.55, -3.35], look: [4.4, 1.55, -3.35] },
+    portrait: { pos: [2.55, 1.5, -3.35], look: [4.4, 1.4, -3.35] },
     fov: 45,
   },
   gallery: {

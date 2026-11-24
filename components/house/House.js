@@ -6,7 +6,7 @@ import { PerformanceMonitor } from '@react-three/drei';
 import Link from 'next/link';
 import Walkway from './Walkway';
 import Sky from './Sky';
-import { getQuality } from './quality';
+import { FPS_BOUNDS, getQuality } from './quality';
 import { FpsBadge, FpsProbe, useFpsMeter } from './FpsMeter';
 import CameraRig from './CameraRig';
 import Hotspots from './Hotspots';
@@ -20,7 +20,7 @@ import { setOnExit } from './terminalStore';
 import WallClock from './WallClock';
 import WallCalendar from './WallCalendar';
 import DeskMug from './DeskMug';
-import SmartTv from './SmartTv';
+import SmartTv, { TvPlayer } from './SmartTv';
 import ArrivalsBoard, { nextBoardPage } from './ArrivalsBoard';
 import LivingPainting from './LivingPainting';
 import BeatStation from './BeatStation';
@@ -334,6 +334,9 @@ export default function House({ onReady }) {
       >
         <PerformanceMonitor
           factor={1}
+          // Fixed bounds: drei's default asks 120 Hz screens for 60 fps or
+          // more, so a phone running smoothly at 50 fps was being blurred.
+          bounds={() => FPS_BOUNDS}
           onChange={({ factor }) => {
             const [low, high] = quality.dpr;
             setDpr(Math.round((low + (high - low) * factor) * 4) / 4);
@@ -401,7 +404,7 @@ export default function House({ onReady }) {
           <WallClock visible={!outside} reducedMotion={reducedMotion} />
           <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
           <DeskMug visible={!outside} reducedMotion={reducedMotion} />
-          <SmartTv visible={!outside} on={tvOn} showing={at === 'tv' && !moving && !panelOpen} />
+          <SmartTv visible={!outside} on={tvOn} />
           <ArrivalsBoard visible={!outside} interactive={!moving && at === 'entry'} reducedMotion={reducedMotion} />
           <LivingPainting
             visible={!outside}
@@ -415,6 +418,9 @@ export default function House({ onReady }) {
       </Canvas>
 
       <div ref={hotspotLayer} className={styles.hotspotLayer} />
+      {/* The TV's picture: a page element the scene keeps over the screen (SmartTv.js).
+          After the hotspots, so Tab reaches the doorways first. */}
+      <TvPlayer on={tvOn} showing={at === 'tv' && !moving && !panelOpen} />
       {showFps && <FpsBadge />}
 
       {/* The books, for keyboards and screen readers: focusing one tips its

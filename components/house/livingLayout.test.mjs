@@ -1,12 +1,11 @@
 // Checks for the living-room TV. Run: npm run test:house
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
-import { TV, PLAYER, PLAYER_DISTANCE_FACTOR, playerUrl, YOUTUBE_ORIGIN } from './livingLayout.js';
+import { TV, playerUrl, YOUTUBE_ORIGIN } from './livingLayout.js';
 import { YOUTUBE_PLAYLIST } from '../../constants/music.js';
 
 // The player is exactly as wide as the screen: drei maps a CSS pixel to distanceFactor / 400 metres.
-assert.ok(Math.abs(PLAYER.width * (PLAYER_DISTANCE_FACTOR / 400) - TV.width) < 1e-9);
-assert.ok(Math.abs(PLAYER.width / PLAYER.height - TV.width / TV.height) < 0.01, 'player and screen are both 16:9');
+assert.ok(Math.abs(TV.width / TV.height - 16 / 9) < 0.01, 'the screen is 16:9, like the videos');
 assert.ok(Math.abs(Math.hypot(TV.width, TV.height) / 0.0254 - 50) < 0.5, 'a 50-inch picture');
 // The address: privacy-enhanced embed, the whole playlist, controllable by messages.
 const url = new URL(playerUrl(YOUTUBE_PLAYLIST.id, { muted: false, origin: 'https://bennyhinn.life' }));

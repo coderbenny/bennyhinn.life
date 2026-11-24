@@ -1,40 +1,40 @@
 // How hard the house works, chosen once per device.
 //
 // The lighting is baked, so there are no shadows or lights to turn off; what
-// costs is the size of the baked textures in GPU memory (seven 2048 px maps
-// are about 117 MB with mipmaps, more than a phone's browser tab can spare)
-// and how many pixels are drawn each frame.
+// costs is the size of the baked textures in GPU memory and how many pixels
+// are drawn each frame.
 //
-//   high    laptops and desktops: full textures, up to 2× pixel ratio, antialiasing
-//   medium  tablets and small laptops: full textures, up to 1.5× pixel ratio
-//   low     phones and low-memory devices: 1024 px textures (walkway-mobile.glb,
-//           about 29 MB on the GPU), up to 1.5× pixel ratio, no antialiasing
+//   high  every ordinary laptop, tablet and phone: full 2048 px textures, up to
+//         2× pixel ratio, antialiasing. Phones get this too: at less, the
+//         slats, frames and edges looked soft and jagged on a 3× iPhone
+//         screen, and any recent phone draws the house at full quality.
+//   low   weak devices only (2 GB of memory or less, or the visitor asked to
+//         save data): walkway-mobile.glb, the same model with 1024 px textures
+//         (about 29 MB on the GPU instead of about 117 MB), up to 1.5×, still
+//         antialiased.
 //
-// On top of this, House.js lowers the pixel ratio while the frame rate stays low.
-// Add ?quality=low (or medium, high) to the address to force a level.
+// On top of this, House.js lowers the pixel ratio if the frame rate stays
+// under 30 fps, and raises it again when there is room.
+// Add ?quality=low (or high) to the address to force a level.
 
 export const LEVELS = {
   high: { model: '/house/walkway.glb', dpr: [1, 2], antialias: true, anisotropy: 8 },
-  medium: { model: '/house/walkway.glb', dpr: [1, 1.5], antialias: true, anisotropy: 4 },
-  low: { model: '/house/walkway-mobile.glb', dpr: [1, 1.5], antialias: false, anisotropy: 2 },
+  low: { model: '/house/walkway-mobile.glb', dpr: [1, 1.5], antialias: true, anisotropy: 4 },
 };
+
+/** Frame rates below which the pixel ratio steps down, and above which it steps back up. */
+export const FPS_BOUNDS = [30, 50];
 
 /**
  * The level for a device.
- * coarse       the main pointer is a finger
- * shortSide    the screen's shorter side, CSS px
- * memory       navigator.deviceMemory, GB (undefined where the browser hides it)
- * cores        navigator.hardwareConcurrency
- * saveData     the visitor asked the browser to save data
- * forced       a level named in the address, if any
+ * memory    navigator.deviceMemory, GB (undefined where the browser hides it, as Safari does)
+ * saveData  the visitor asked the browser to save data
+ * forced    a level named in the address, if any
  */
-export function chooseQuality({ coarse, shortSide, memory, cores, saveData, forced }) {
+export function chooseQuality({ memory, saveData, forced }) {
   if (forced && LEVELS[forced]) return forced;
   if (saveData) return 'low';
-  if (coarse && shortSide < 600) return 'low'; // a phone
   if (memory !== undefined && memory <= 2) return 'low';
-  if (coarse) return 'medium'; // a tablet
-  if ((memory !== undefined && memory <= 4) || (cores && cores <= 4)) return 'medium';
   return 'high';
 }
 
@@ -50,10 +50,7 @@ export function getQuality() {
     // no address to read
   }
   const level = chooseQuality({
-    coarse: window.matchMedia('(pointer: coarse)').matches,
-    shortSide: Math.min(window.screen.width, window.screen.height),
     memory: navigator.deviceMemory,
-    cores: navigator.hardwareConcurrency,
     saveData: Boolean(navigator.connection?.saveData),
     forced,
   });

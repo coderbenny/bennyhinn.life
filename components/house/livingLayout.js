@@ -12,10 +12,6 @@ export const TV = {
   depth: 0.035,
 };
 
-/** The YouTube player's size in CSS pixels, and the drei Html factor that makes it exactly TV.width wide. */
-export const PLAYER = { width: 1120, height: 630 };
-export const PLAYER_DISTANCE_FACTOR = (TV.width * 400) / PLAYER.width;
-
 export const YOUTUBE_ORIGIN = 'https://www.youtube-nocookie.com';
 
 /** The embed address: the whole playlist, playing from the start, looping. */

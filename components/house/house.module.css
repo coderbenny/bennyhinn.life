@@ -699,8 +699,27 @@ ol.panelList {
 }
 
 /* The YouTube player over the TV's screen. */
+/* The TV's picture (SmartTv.js): placed over the screen every frame, below
+   the hotspots, cards and panels. Out of sight (but still playing) unless the
+   visitor sits facing the TV. */
+.tvBox {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 320px;
+  height: 180px;
+  z-index: 5;
+  visibility: hidden;
+  pointer-events: none;
+}
+.tvBox[data-showing]:not([data-behind]) {
+  visibility: visible;
+  pointer-events: auto;
+}
 .tvPlayer {
   display: block;
+  width: 100%;
+  height: 100%;
   border: 0;
   background: #000;
 }
@@ -780,4 +799,32 @@ ol.panelList {
   color: #e8f0d8;
   font: 600 12px/1.4 ui-monospace, monospace;
   pointer-events: none;
+}
+
+/* Phones turned sideways: the screen is short, so the room card shrinks to
+   its words to one line, cut short, without the room's name,
+   and sits low and wide, leaving the scene above it in view. The full words
+   are in each room's panel. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .card {
+    bottom: 0.6rem;
+    width: min(calc(100vw - 2rem), 46rem);
+    padding: 0.55rem 0.9rem 0.65rem;
+  }
+  /* The room's name is still read out, just not shown. */
+  .card .cardTitle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .card p {
+    margin: 0 0 0.45rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
