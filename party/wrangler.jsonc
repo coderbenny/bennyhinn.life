@@ -12,5 +12,7 @@
     // The pages allowed to open rooms (browsers send their Origin).
     "ALLOWED_ORIGINS": "https://bennyhinn.life,https://www.bennyhinn.life,http://localhost:3000"
   },
+  // The site finds the rooms here (PARTY_HOST in components/house/partyStore.js).
+  "routes": [{ "pattern": "party.bennyhinn.life", "custom_domain": true }],
   "observability": { "enabled": true }
 }
