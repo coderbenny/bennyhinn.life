@@ -166,6 +166,30 @@ const SOUNDS = {
   tick(t) {
     tone(t, { freq: 740, duration: 0.14, gain: 0.22, type: 'square' });
   },
+  // The race: a fruit, a golden fruit, a crash, the bell.
+  eat(t) {
+    tone(t, { freq: 880, to: 1320, duration: 0.07, gain: 0.12, type: 'triangle' });
+  },
+  golden(t) {
+    [1046, 1318, 1568, 2093].forEach((f, i) => tone(t + i * 0.05, { freq: f, duration: 0.16, gain: 0.1, type: 'triangle' }));
+  },
+  crash(t) {
+    hiss(t, { duration: 0.25, type: 'lowpass', freq: 700, gain: 0.5 });
+    tone(t, { freq: 220, to: 55, duration: 0.35, gain: 0.25, type: 'sawtooth' });
+  },
+  bell(t) {
+    tone(t, { freq: 1318, duration: 1.1, gain: 0.16 });
+    tone(t, { freq: 1976, duration: 0.8, gain: 0.07 });
+  },
+  // The leaderboard: a snare hit for each name, a fanfare for the winner.
+  drum(t) {
+    hiss(t, { duration: 0.09, type: 'highpass', freq: 1800, gain: 0.35 });
+    tone(t, { freq: 190, to: 120, duration: 0.08, gain: 0.2 });
+  },
+  win(t) {
+    [523, 659, 784, 1046].forEach((f, i) => tone(t + i * 0.11, { freq: f, duration: i === 3 ? 0.6 : 0.16, gain: 0.16, type: 'square' }));
+    tone(t + 0.33, { freq: 1568, duration: 0.6, gain: 0.06, type: 'triangle' });
+  },
   // ...go! An octave up, with a fifth on top.
   go(t) {
     tone(t, { freq: 1480, duration: 0.32, gain: 0.2, type: 'square' });

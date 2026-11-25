@@ -113,6 +113,12 @@ export function steer(dir) {
   set({ game: turn(s.game, dir) });
 }
 
+/** Adds lines to the screen from elsewhere (the Snake party says how it ended). */
+export function print(lines) {
+  const s = init();
+  set({ lines: [...s.lines, ...lines].slice(-MAX_LINES) });
+}
+
 /** Runs what is typed. */
 export function submit() {
   const s = init();

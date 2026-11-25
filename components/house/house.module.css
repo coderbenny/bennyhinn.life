@@ -1217,3 +1217,274 @@ ol.panelList {
     opacity: 1;
   }
 }
+
+/* ---- Snake party: the race and the results (PartyRace.js) ---- */
+.partyRaceHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.partyClock {
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #f0f6fc;
+  font-variant-numeric: tabular-nums;
+}
+
+.partyClock[data-last] {
+  color: #ff7b72;
+  animation: partyThrob 1s ease-in-out infinite;
+}
+
+@keyframes partyThrob {
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.partyBar {
+  height: 6px;
+  margin: 0.2rem 0 0.8rem;
+  border-radius: 999px;
+  background: rgba(240, 246, 252, 0.08);
+  overflow: hidden;
+}
+
+.partyBar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #7ee787, #e3b341);
+  transform-origin: left;
+  transition: transform 0.2s linear;
+}
+
+.partyBar span[data-last] {
+  background: #ff7b72;
+}
+
+/* Rows are placed by transform, so a change of place slides. */
+.partyRanking {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.partyRankRow {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--player) 12%, rgba(1, 4, 9, 0.5));
+  border-left: 4px solid var(--player);
+  transition: transform 0.45s cubic-bezier(0.2, 1.1, 0.4, 1);
+}
+
+.partyRankRow[data-you] {
+  box-shadow: 0 0 0 1px var(--player), 0 0 18px color-mix(in srgb, var(--player) 40%, transparent);
+}
+
+.partyRankRow[data-out] {
+  opacity: 0.55;
+}
+
+.partyRankPlace {
+  width: 1.2rem;
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-weight: 800;
+  color: rgba(240, 246, 252, 0.7);
+}
+
+.partyRankScore {
+  margin-left: auto;
+  font-family: var(--font-geist-mono), 'SF Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--player, #f0f6fc);
+  font-variant-numeric: tabular-nums;
+  animation: partyBump 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes partyBump {
+  from {
+    transform: scale(1.6);
+  }
+}
+
+/* The results: each row flips in as it's revealed; the winner glows. */
+.partyResults {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.partyResultRow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--player) 14%, rgba(1, 4, 9, 0.55));
+  border-left: 5px solid var(--player);
+  animation: partyFlip 0.5s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.partyResultRow[data-hidden] {
+  background: rgba(1, 4, 9, 0.4);
+  border-left-color: rgba(240, 246, 252, 0.15);
+  animation: none;
+}
+
+.partyResultRow[data-winner] {
+  background: color-mix(in srgb, var(--player) 26%, rgba(1, 4, 9, 0.5));
+  box-shadow: 0 0 0 1px var(--player), 0 0 30px color-mix(in srgb, var(--player) 50%, transparent);
+}
+
+.partyYou {
+  font-weight: 400;
+  color: rgba(240, 246, 252, 0.55);
+}
+
+@keyframes partyFlip {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(-80deg);
+  }
+}
+
+.partyResultMedal {
+  width: 1.8rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.partyResultName {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+
+.partyResultName small {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: rgba(240, 246, 252, 0.6);
+}
+
+.partyAwards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.partyAward {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  background: color-mix(in srgb, var(--player) 16%, rgba(1, 4, 9, 0.6));
+  border: 1px solid color-mix(in srgb, var(--player) 50%, transparent);
+  animation: partyPop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.partyNote {
+  margin: 0.7rem 0 0;
+  font-size: 0.76rem;
+  color: rgba(240, 246, 252, 0.55);
+}
+
+.partyConfetti {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.partyConfetti span {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: partyFall 2.6s cubic-bezier(0.3, 0.6, 0.6, 1) both;
+}
+
+@keyframes partyFall {
+  to {
+    transform: translate(var(--drift), 105vh) rotate(var(--spin));
+    opacity: 0.2;
+  }
+}
+
+/* Phones: during the race the panel goes to the top, small, so the monitor
+   and the arrow pad have the rest; the feed sits just under it. */
+@media (max-width: 767px) {
+  .partyPanel[data-phase='playing'] {
+    top: 3.4rem;
+    bottom: auto;
+    max-height: 34dvh;
+    padding: 0.6rem 0.8rem 0.7rem;
+  }
+  .partyPanel[data-phase='playing'] .partyLead {
+    display: none;
+  }
+  .partyPanel[data-phase='playing'] .partyRankRow {
+    height: 30px;
+  }
+  .partyPanel[data-phase='results'] {
+    max-height: 70dvh;
+  }
+  /* Out of the race: no arrow pad any more, so the panel can grow and say what's next. */
+  .partyPanel[data-phase='playing']:has([data-crashed]) {
+    max-height: 60dvh;
+  }
+  .partyPanel[data-phase='playing'] [data-crashed] {
+    display: block;
+  }
+  /* Your board, big, between the ranking and the arrow pad. */
+  .partyPhoneBoard {
+    position: fixed;
+    z-index: 34;
+    left: 8px;
+    right: 8px;
+    top: calc(3.4rem + 30dvh + 10px);
+    width: calc(100vw - 16px);
+    aspect-ratio: 28 / 15;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+  .partyPanel[data-phase='playing'] {
+    max-height: 30dvh;
+  }
+  /* During the race the top belongs to the ranking: the feed sits above the arrow pad. */
+  .partyFeed[data-phase='playing'] {
+    top: auto;
+    bottom: 12.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partyRankRow,
+  .partyBar span {
+    transition: none;
+  }
+  .partyRankScore,
+  .partyResultRow,
+  .partyAward,
+  .partyClock[data-last] {
+    animation: none;
+  }
+}

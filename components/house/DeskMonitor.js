@@ -4,12 +4,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SCREEN } from './deskLayout';
-import { GRID } from './snake';
+import { GRID, ROUND_MS } from './snake';
 import { PROMPT } from './terminal';
 import { useTerminal } from './TerminalInput';
 import { useParty } from './PartyPanel';
 import { serverNow } from './partyStore';
-import { MAX_PLAYERS_SHOWN, countdownAt } from './partyView';
+import { MAX_PLAYERS_SHOWN, REVEAL_MS, clock, countdownAt, finalSeconds, liveRanking, medal, revealed, timeLeft } from './partyView';
+import { getPlay } from './partyPlay';
+import { drawBoard } from './partyDraw';
 
 // The monitor on the desk: a terminal. It opens on the site's latest commit;
 // walking up to it, visitors can type commands (/help lists them) and play
@@ -146,6 +148,130 @@ function wiggle(ctx, x, y, { color, len = 6, size = 16, t, phase = 0, amp = 6 })
   ctx.globalAlpha = 1;
 }
 
+// Where each name sits in the live ranking, eased each frame so overtakes glide.
+const rowY = new Map();
+let resultsSeen = null; // when this screen first showed the round's results
+
+/** The race: your board, the clock, the live ranking. */
+function drawRace(ctx, party, race, t, now) {
+  const { width: w, height: h } = ctx.canvas;
+  const room = party.room;
+  const mine = room.players.find((p) => p.id === party.you);
+  const color = mine?.color ?? '#3fb950';
+  const game = race.game;
+  titleBar(ctx, w, `snake party · ${party.code}`);
+  // The clock: a bar that drains, amber under a minute, red and pulsing at the end.
+  const left = timeLeft(room.endsAt, now) ?? 0;
+  const frac = left / ROUND_MS;
+  const last = finalSeconds(room.endsAt, now);
+  ctx.fillStyle = '#161b22';
+  ctx.fillRect(0, 58, w, 12);
+  ctx.fillStyle = last ? `rgba(255, 123, 114, ${0.6 + 0.4 * Math.sin(t * 12)})` : left < 60_000 ? '#e3b341' : '#7ee787';
+  ctx.fillRect(0, 58, w * frac, 12);
+
+  // The board, left.
+  const side = 250;
+  const top = 84;
+  const cell = Math.min((w - side - 40) / GRID.cols, (h - top - 14) / GRID.rows);
+  const ox = 16;
+  const oy = top + (h - top - 14 - cell * GRID.rows) / 2;
+  ctx.strokeStyle = game?.over ? '#ff7b7266' : `${color}66`;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(ox - 2, oy - 2, cell * GRID.cols + 4, cell * GRID.rows + 4);
+  drawBoard(ctx, { game, color, pops: race.pops, now, ox, oy, cell, mono: MONO });
+  // The last ten seconds, big.
+  if (last) {
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255, 123, 114, 0.85)';
+    ctx.font = `800 ${110 + 20 * (1 - (left % 1000) / 1000)}px ${MONO}`;
+    ctx.globalAlpha = 0.35;
+    ctx.fillText(String(last), ox + (cell * GRID.cols) / 2, oy + (cell * GRID.rows) / 2 + 40);
+    ctx.globalAlpha = 1;
+  }
+
+  // The live ranking, right: rows glide when places change.
+  const sx = w - side + 4;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = `rgba(255, 123, 114, ${0.55 + 0.45 * Math.sin(t * 6)})`;
+  ctx.beginPath();
+  ctx.arc(sx + 10, top + 12, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#8b949e';
+  ctx.font = `700 24px ${MONO}`;
+  ctx.fillText('LIVE', sx + 26, top + 21);
+  ctx.textAlign = 'right';
+  ctx.fillText(clock(left), w - 16, top + 21);
+  const ranking = liveRanking(room.players, party.you, game?.score ?? null);
+  const rowH = 64;
+  ranking.forEach((r, i) => {
+    const target = top + 44 + i * rowH;
+    const y = rowY.has(r.id) ? rowY.get(r.id) + (target - rowY.get(r.id)) * 0.18 : target;
+    rowY.set(r.id, y);
+    const out = r.status === 'out' || r.status === 'left';
+    ctx.globalAlpha = out ? 0.5 : 1;
+    if (r.id === party.you) {
+      ctx.fillStyle = `${r.color}26`;
+      ctx.fillRect(sx - 4, y - 4, side - 16, rowH - 8);
+    }
+    ctx.fillStyle = r.color;
+    ctx.fillRect(sx, y + 4, 8, rowH - 16);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = `700 26px ${MONO}`;
+    ctx.fillText(`${r.place}`, sx + 18, y + 34);
+    ctx.font = `600 24px ${MONO}`;
+    const name = [...r.name].length > 8 ? `${[...r.name].slice(0, 7).join('')}…` : r.name;
+    ctx.fillText(name + (out ? ' ✕' : ''), sx + 46, y + 34);
+    ctx.textAlign = 'right';
+    ctx.font = `800 28px ${MONO}`;
+    ctx.fillStyle = r.color;
+    ctx.fillText(String(r.score), w - 18, y + 35);
+    ctx.globalAlpha = 1;
+  });
+  ctx.textAlign = 'left';
+}
+
+/** After the round: a podium rising for the top three, the winner crowned. */
+function drawPodium(ctx, party, t) {
+  const { width: w, height: h } = ctx.canvas;
+  const results = party.room.results;
+  titleBar(ctx, w, `snake party · ${party.code} · round ${results.round}`);
+  if (resultsSeen?.round !== results.round) resultsSeen = { round: results.round, at: performance.now() };
+  const since = performance.now() - resultsSeen.at;
+  const rows = results.ranking;
+  const shown = revealed(rows.length, since); // counted from last place
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#7ee787';
+  ctx.font = `800 46px ${MONO}`;
+  ctx.fillText('ROUND OVER', w / 2, 118);
+  const order = [1, 0, 2]; // second, first, third, left to right
+  const heights = [190, 140, 105];
+  const colW = 200;
+  order.forEach((idx, col) => {
+    const r = rows[idx];
+    if (!r || rows.length - idx > shown) return;
+    const x = w / 2 + (col - 1) * (colW + 24);
+    const rise = Math.min(1, (since - (rows.length - idx - 1) * REVEAL_MS) / 400);
+    const bh = heights[idx] * Math.max(0, rise);
+    const base = h - 30;
+    ctx.fillStyle = r.color;
+    ctx.fillRect(x - colW / 2, base - bh, colW, bh);
+    ctx.fillStyle = '#0d1117';
+    ctx.font = `800 40px ${MONO}`;
+    if (bh > 50) ctx.fillText(String(r.score), x, base - bh + 48);
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = `700 30px ${MONO}`;
+    const name = [...r.name].length > 10 ? `${[...r.name].slice(0, 9).join('')}…` : r.name;
+    ctx.fillText(`${medal(r.place)} ${name}`, x, base - bh - 16);
+    if (idx === 0 && rise >= 1) {
+      // The crown bobs.
+      ctx.font = `64px ${MONO}`;
+      ctx.fillText('👑', x, base - bh - 64 + Math.sin(t * 4) * 6);
+    }
+  });
+  ctx.textAlign = 'left';
+}
+
 /** The party as the monitor shows it, at time `t` (seconds) and room clock `now`. */
 function drawParty(ctx, party, t, now) {
   const { width: w, height: h } = ctx.canvas;
@@ -220,10 +346,10 @@ function drawParty(ctx, party, t, now) {
     ctx.fillStyle = '#8b949e';
     ctx.font = `500 26px ${MONO}`;
     ctx.fillText(party.error?.code === 'full' ? 'this party is full' : 'this party has ended', w / 2, h / 2 + 34);
-  } else if (phase === 'playing' || phase === 'results') {
-    ctx.fillStyle = '#7ee787';
-    ctx.font = `800 54px ${MONO}`;
-    ctx.fillText(phase === 'playing' ? 'ROUND ON' : 'ROUND OVER', w / 2, h / 2);
+  } else if (phase === 'playing') {
+    drawRace(ctx, party, getPlay(), t, now);
+  } else if (phase === 'results' && room.results) {
+    drawPodium(ctx, party, t);
   } else {
     // Naming or connecting: a title screen with the five colours wiggling by.
     ['#3fb950', '#58a6ff', '#f778ba', '#ffa657', '#d2a8ff'].forEach((color, i) => {

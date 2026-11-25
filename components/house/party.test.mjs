@@ -44,3 +44,50 @@ assert.equal(countdownAt(start, start + GO_MS), -1);
 assert.equal(countdownAt(null, start), -1);
 
 console.log('snake party links: all checks passed');
+
+// ---- The race: time, ranking, the reveal ----
+{
+  const { timeLeft, finalSeconds, clock, liveRanking, medal, revealed, REVEAL_MS, resultsText } = await import('./partyView.js');
+  assert.equal(timeLeft(null, 5), null);
+  assert.equal(timeLeft(10_000, 4_000), 6_000);
+  assert.equal(timeLeft(10_000, 12_000), 0);
+  assert.equal(finalSeconds(100_000, 100_000 - 10_001), null, 'quiet until the last ten seconds');
+  assert.equal(finalSeconds(100_000, 100_000 - 10_000), 10);
+  assert.equal(finalSeconds(100_000, 100_000 - 1), 1);
+  assert.equal(finalSeconds(100_000, 100_000), null);
+  assert.equal(clock(180_000), '3:00');
+  assert.equal(clock(61_001), '1:02');
+  assert.equal(clock(9_000), '0:09');
+
+  const players = [
+    { id: 'p1', name: 'Benny', score: 4, status: 'out' },
+    { id: 'p2', name: 'Ana', score: 4, status: 'playing' },
+    { id: 'p3', name: 'Joe', score: 9, status: 'playing' },
+    { id: 'p4', name: 'Kim', score: 0, status: 'left' },
+  ];
+  const r = liveRanking(players);
+  assert.deepEqual(
+    r.map((x) => x.name),
+    ['Joe', 'Ana', 'Benny', 'Kim'],
+    'by score; on a tie, the one still playing first'
+  );
+  assert.deepEqual(
+    r.map((x) => x.place),
+    [1, 2, 2, 4],
+    'a tie shares a place'
+  );
+  // Your own score from your screen, a moment ahead of the room's (never behind it).
+  const mine = liveRanking(players, 'p1', 12);
+  assert.equal(mine[0].name, 'Benny');
+  assert.equal(liveRanking(players, 'p1', 2).find((x) => x.id === 'p1').score, 4);
+  assert.equal(medal(1), '🥇');
+  assert.equal(medal(4), '4.');
+  // The reveal: one row, then one more every REVEAL_MS, never more than there are.
+  assert.equal(revealed(4, 0), 1);
+  assert.equal(revealed(4, REVEAL_MS - 1), 1);
+  assert.equal(revealed(4, REVEAL_MS), 2);
+  assert.equal(revealed(4, REVEAL_MS * 10), 4);
+  const text = resultsText({ ranking: [{ place: 1, name: 'Joe', score: 9 }, { place: 2, name: 'Ana', score: 4 }] });
+  assert.ok(text.includes('🥇 Joe: 9') && text.includes('🥈 Ana: 4') && text.includes('bennyhinn.life'));
+}
+console.log('snake party race: all checks passed');

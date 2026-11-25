@@ -44,7 +44,7 @@ export const ERRORS = {
 // Errors that end the attempt to be in the room (others are shown and passed).
 const FATAL = new Set(['full', 'started', 'no-room', 'ended', 'bad-token', 'unreachable']);
 
-const blank = () => ({ status: 'idle', code: null, create: false, name: '', you: null, room: null, error: null, online: false, offset: 0, feed: [] });
+const blank = () => ({ status: 'idle', code: null, create: false, name: '', you: null, room: null, error: null, online: false, offset: 0, feed: [], resume: [] });
 
 let state = blank();
 let socket = null;
@@ -222,7 +222,8 @@ function receive(msg) {
       return;
     }
     case 'welcome':
-      set({ status: 'in', you: msg.you, error: null });
+      // `moves`: mid-round, the turns the room has from you, to carry on from.
+      set({ status: 'in', you: msg.you, error: null, resume: msg.moves ?? [] });
       update(msg.state, []);
       return;
     case 'state':
@@ -238,8 +239,15 @@ function receive(msg) {
       say(ERRORS[msg.code] ?? 'That didn’t work.', { kind: 'warn' });
       return;
     default:
+      hook?.(msg);
   }
 }
+
+// The race (partyPlay.js) hears the room's other messages ('resend').
+let hook = null;
+export const setRoomHook = (fn) => {
+  hook = fn;
+};
 
 /** A new room state: news for the feed, then the state itself. */
 function update(room, events) {
@@ -275,6 +283,12 @@ function update(room, events) {
 // ---- What players do ----------------------------------------------------------------
 
 export const startRound = () => send({ t: 'start' });
+
+/** After crashing: wait to see the results with everyone. */
+export const stayForResults = () => send({ t: 'stay' });
+
+/** The host plays again with everyone still here. */
+export const rematch = () => send({ t: 'rematch' });
 
 /** The invite link for this party. */
 export const partyInvite = () => (state.code ? inviteUrl(window.location.origin, state.code) : null);
