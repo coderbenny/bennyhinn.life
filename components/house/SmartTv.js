@@ -48,7 +48,7 @@ const CORNERS = [
  * In the scene: the TV's body and its poster.
  * on  the player is in the page (the visitor has come into the living room)
  */
-export default function SmartTv({ visible, on }) {
+export default function SmartTv({ visible = true, on }) {
   const poster = useMemo(() => {
     const t = new THREE.TextureLoader().load(POSTER);
     t.colorSpace = THREE.SRGBColorSpace;

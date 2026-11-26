@@ -420,7 +420,8 @@ export default function House({ onReady }) {
           <WallClock visible={!outside} reducedMotion={reducedMotion} />
           <WallCalendar visible={!outside} load={at !== null && at !== HOME} />
           <DeskMug visible={!outside} reducedMotion={reducedMotion} />
-          <SmartTv visible={!outside} on={tvOn} />
+          {/* Always shown: it can be seen from the walkway, through the living-room window. */}
+          <SmartTv on={tvOn} />
           <ArrivalsBoard visible={!outside} interactive={!moving && at === 'entry'} reducedMotion={reducedMotion} />
           <LivingPainting
             visible={!outside}
