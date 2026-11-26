@@ -1,4 +1,4 @@
-// Soft sounds for the house: the door, the mailbox flag, a book sliding out,
+// Soft sounds for the house: the door shutting, the mailbox flag, a book sliding out,
 // a record leaving its sleeve, a card coming off the corkboard, the arrivals
 // board's flaps. All are made
 // with the Web Audio API on the spot (filtered noise and a few oscillators),
@@ -93,34 +93,6 @@ function tone(at, { freq, duration, gain = 0.3, type = 'sine', to }) {
 }
 
 const SOUNDS = {
-  // The latch, then a low creak as the door swings in.
-  door(t) {
-    hiss(t, { duration: 0.06, type: 'lowpass', freq: 900, gain: 0.5 });
-    tone(t, { freq: 140, to: 90, duration: 0.09, gain: 0.25 });
-    const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(95, t + 0.12);
-    osc.frequency.linearRampToValueAtTime(70, t + 0.9);
-    // Stick-slip: the creak stutters, so its volume flutters quickly.
-    const flutter = ctx.createOscillator();
-    flutter.frequency.value = 28;
-    const depth = ctx.createGain();
-    depth.gain.value = 0.5;
-    const env = ctx.createGain();
-    env.gain.setValueAtTime(0.0001, t + 0.12);
-    env.gain.exponentialRampToValueAtTime(0.05, t + 0.3);
-    env.gain.exponentialRampToValueAtTime(0.0001, t + 0.95);
-    flutter.connect(depth).connect(env.gain);
-    const body = ctx.createBiquadFilter();
-    body.type = 'bandpass';
-    body.frequency.value = 700;
-    body.Q.value = 3;
-    osc.connect(body).connect(env).connect(master);
-    osc.start(t + 0.12);
-    flutter.start(t + 0.12);
-    osc.stop(t + 1);
-    flutter.stop(t + 1);
-  },
   // The door settling shut.
   close(t) {
     hiss(t, { duration: 0.08, type: 'lowpass', freq: 600, gain: 0.45 });

@@ -114,12 +114,12 @@ export default function House({ onReady }) {
 
   // Sounds, each in answer to something the visitor did.
   // The door: not on the first load (a deep link starts inside, and nothing
-  // was clicked yet), only when it opens or closes after that.
+  // was clicked yet), only when it shuts behind a visitor stepping back out.
+  // Opening it is silent.
   const wasOutside = useRef(null);
   useEffect(() => {
     if (at === null) return;
     if (wasOutside.current === null) wasOutside.current = outside;
-    else if (wasOutside.current && !outside) play('door');
     else if (!wasOutside.current && outside) play('close');
     wasOutside.current = outside;
   }, [outside, at]);
