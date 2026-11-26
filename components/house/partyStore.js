@@ -39,10 +39,11 @@ export const ERRORS = {
   'bad-name': 'Pick a name with at least one letter or number.',
   'not-host': 'Only the host can do that.',
   'need-players': 'You need at least one more player to start.',
+  idle: 'This party closed because nobody started it for 20 minutes. Type /party to start a new one.',
   unreachable: 'Can’t reach the party server right now. Check your connection and try again.',
 };
 // Errors that end the attempt to be in the room (others are shown and passed).
-const FATAL = new Set(['full', 'started', 'no-room', 'ended', 'bad-token', 'unreachable']);
+const FATAL = new Set(['full', 'started', 'no-room', 'ended', 'idle', 'bad-token', 'unreachable']);
 
 const blank = () => ({ status: 'idle', code: null, create: false, name: '', you: null, room: null, error: null, online: false, offset: 0, feed: [], resume: [] });
 
@@ -223,7 +224,9 @@ function receive(msg) {
     }
     case 'welcome':
       // `moves`: mid-round, the turns the room has from you, to carry on from.
-      set({ status: 'in', you: msg.you, error: null, resume: msg.moves ?? [] });
+      // In now, so a reconnection only ever rejoins: if the room has ended
+      // meanwhile, it must not be opened again by a tab left open.
+      set({ status: 'in', you: msg.you, error: null, resume: msg.moves ?? [], create: false });
       update(msg.state, []);
       return;
     case 'state':

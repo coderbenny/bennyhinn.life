@@ -28,6 +28,12 @@ export const RESULTS_KEEP_MS = 10 * 60_000;
 export const NAME_MAX = 12;
 export const MAX_MESSAGE_BYTES = 16_384;
 export const MAX_MESSAGES_PER_SECOND = 30;
+// Limits on how long a room stays awake. An open connection keeps its room in
+// memory, and Cloudflare counts every second of that, so nothing may hold a
+// room open without playing:
+export const HELLO_MS = 10_000; // a connection must say hello (and be let in) this soon, or it's closed
+export const MAX_CONNECTIONS = 12; // per room: 5 players, their reloads, and a few onlookers at the results
+export const LOBBY_MS = 20 * 60_000; // a lobby that never starts closes after this long
 const FLUSH_MS = 100; // state goes out at most this often
 export const COLORS = ['#3fb950', '#58a6ff', '#f778ba', '#ffa657', '#d2a8ff'];
 
@@ -74,7 +80,7 @@ export class Room {
     this.seed = null;
     this.startAt = 0;
     this.results = null;
-    this.timers = { flush: null, start: null, end: null, expire: null };
+    this.timers = { flush: null, start: null, end: null, expire: null, lobby: null };
     this.drops = new Map(); // player id -> the moment a dropped player is given up on
     this.nextId = 1;
   }
@@ -82,8 +88,15 @@ export class Room {
   // ---- Connections ----------------------------------------------------------
 
   connect(connId) {
-    this.conns.set(connId, { player: null, viewer: false, window: 0, count: 0 });
-    // Nothing is said until the connection says hello.
+    if (this.conns.size >= MAX_CONNECTIONS) return this.io.close(connId);
+    // Nothing is said until the connection says hello, and it has HELLO_MS to.
+    this.conns.set(connId, { player: null, viewer: false, window: 0, count: 0, helloBy: this.io.now() + HELLO_MS });
+    this.schedule();
+  }
+
+  /** A connection that is neither a player nor watching the results (never got in, or left). */
+  idle(c) {
+    return !c.viewer && (!c.player || c.player.conn === null);
   }
 
   disconnect(connId) {
@@ -171,6 +184,7 @@ export class Room {
     if (this.phase === 'empty') {
       if (!create) return this.refuse(connId, 'no-room'); // a link to a room that has ended
       this.phase = 'lobby';
+      this.timers.lobby = this.io.now() + LOBBY_MS;
     } else if (this.phase !== 'lobby') {
       return this.refuse(connId, 'started');
     }
@@ -235,8 +249,12 @@ export class Room {
       const conn = p.conn;
       p.conn = null;
       this.conns.get(conn) && (this.conns.get(conn).player = null);
+      this.io.close(conn); // the page closes it too; a connection that has left holds nothing open
     }
-    if (this.phase === 'lobby' && !this.players.length) this.phase = 'empty';
+    if (this.phase === 'lobby' && !this.players.length) {
+      this.phase = 'empty';
+      this.timers.lobby = null;
+    }
     this.checkEnd();
     this.changed();
   }
@@ -252,6 +270,7 @@ export class Room {
     if (this.phase !== 'lobby') return this.refuse(p.conn, 'started');
     const ready = this.players.filter((q) => q.status === 'lobby');
     if (ready.length < MIN_PLAYERS) return this.refuse(p.conn, 'need-players');
+    this.timers.lobby = null;
     this.round++;
     this.leaderId = null;
     this.seed = this.makeSeed();
@@ -396,6 +415,7 @@ export class Room {
     this.timers.expire = null;
     this.io.dropResults();
     this.phase = 'lobby';
+    this.timers.lobby = this.io.now() + LOBBY_MS;
     if (!this.isActive(this.host)) this.passHost();
     this.schedule();
     this.changed();
@@ -426,8 +446,14 @@ export class Room {
       this.timers.expire = null;
       this.results = null;
       this.io.dropResults();
-      for (const c of [...this.conns.keys()]) this.io.close(c);
-      this.reset();
+      this.end('ended');
+    }
+    if (this.timers.lobby !== null && now >= this.timers.lobby && this.phase === 'lobby') {
+      // Nobody started it: the room closes rather than staying awake for nothing.
+      this.end('idle');
+    }
+    for (const [connId, c] of this.conns) {
+      if (this.idle(c) && now >= c.helloBy) this.io.close(connId);
     }
     if (this.timers.flush !== null && now >= this.timers.flush) {
       this.timers.flush = null;
@@ -436,17 +462,30 @@ export class Room {
     this.schedule();
   }
 
+  /**
+   * Ends the room: everyone is told why (so their page stops instead of
+   * reconnecting, which would open the room again) and disconnected.
+   */
+  end(code) {
+    for (const connId of [...this.conns.keys()]) {
+      this.io.send(connId, { t: 'error', code });
+      this.io.close(connId);
+    }
+    this.reset();
+  }
+
   reset() {
     this.phase = 'empty';
     this.players = [];
     this.host = null;
     this.seed = null;
     this.drops.clear();
-    this.timers = { flush: null, start: null, end: null, expire: null };
+    this.timers = { flush: null, start: null, end: null, expire: null, lobby: null };
   }
 
   schedule() {
-    const times = [...Object.values(this.timers), ...this.drops.values()].filter((t) => t !== null);
+    const hellos = [...this.conns.values()].filter((c) => this.idle(c)).map((c) => c.helloBy);
+    const times = [...Object.values(this.timers), ...this.drops.values(), ...hellos].filter((t) => t !== null);
     this.io.wakeAt(times.length ? Math.min(...times) : null);
   }
 

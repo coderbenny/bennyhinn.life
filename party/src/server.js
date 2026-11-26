@@ -71,6 +71,8 @@ export class SnakeParty extends Server {
     await this.ctx.storage.delete('results');
     for (const c of this.getConnections()) {
       try {
+        // Said first, so the page stops rather than reconnecting and opening the room again.
+        c.send(JSON.stringify({ t: 'error', code: 'ended' }));
         c.close(1000, 'ended');
       } catch {
         // already closed

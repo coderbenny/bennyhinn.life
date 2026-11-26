@@ -5,6 +5,9 @@ import assert from 'node:assert/strict';
 import {
   BELL_GRACE_MS,
   COUNTDOWN_MS,
+  HELLO_MS,
+  LOBBY_MS,
+  MAX_CONNECTIONS,
   MAX_MESSAGES_PER_SECOND,
   MAX_PLAYERS,
   RECONNECT_MS,
@@ -402,6 +405,80 @@ for (const bad of ['', '   ', '\u0000\u0001', 42, null, undefined]) assert.equal
   const c = join(w, 3, 'C');
   w.say(c, { t: 'ping', c: 123 });
   assert.deepEqual(w.last(c, 'pong'), { t: 'pong', c: 123, s: w.t });
+}
+
+// ---- Nothing holds a room awake without playing -----------------------------------------------
+{
+  // A connection that never says hello is closed.
+  const w = world();
+  const silent = w.open();
+  w.after(HELLO_MS - 100);
+  assert.ok(!w.closed.has(silent), 'it has a few seconds');
+  w.after(200);
+  assert.ok(w.closed.has(silent), 'then it goes');
+  // Nor does a refused one linger (a link to a room that has ended).
+  const lost = w.open();
+  w.say(lost, { t: 'hello', token: token(9), name: 'Z' });
+  assert.equal(w.last(lost, 'error').code, 'no-room');
+  w.after(HELLO_MS + 10);
+  assert.ok(w.closed.has(lost), 'refused, then closed');
+  // A player who got in stays, however long the hello window was.
+  const a = join(w, 1, 'A', true);
+  w.after(HELLO_MS * 3);
+  assert.ok(!w.closed.has(a), 'players are not timed out');
+  // Leaving in the lobby gives the place up, and the connection goes too.
+  const b = join(w, 2, 'B');
+  w.say(b, { t: 'leave' });
+  w.after(200); // at the room's next update
+  assert.ok(w.closed.has(b), 'a player who left is let go');
+}
+{
+  // A room takes at most MAX_CONNECTIONS at once.
+  const w = world();
+  const conns = Array.from({ length: MAX_CONNECTIONS + 3 }, () => w.open());
+  assert.deepEqual(conns.filter((c) => w.closed.has(c)), conns.slice(MAX_CONNECTIONS), 'the extra ones are closed at once');
+  // The room still works for the ones it took.
+  w.say(conns[0], { t: 'hello', token: token(1), name: 'A', create: true });
+  assert.equal(w.last(conns[0], 'welcome').you, 'p1');
+}
+{
+  // A lobby nobody starts closes, telling everyone why.
+  const w = world();
+  const a = join(w, 1, 'A', true);
+  const b = join(w, 2, 'B');
+  w.after(LOBBY_MS - 1000);
+  assert.equal(w.state(a).phase, 'lobby');
+  w.after(2000);
+  for (const c of [a, b]) {
+    assert.equal(w.last(c, 'error').code, 'idle', 'told why');
+    assert.ok(w.closed.has(c), 'and let go');
+  }
+  assert.equal(w.room.phase, 'empty');
+  // Only a new invitation opens it again; a returning player can't.
+  const back = w.open();
+  w.say(back, { t: 'hello', token: token(2), name: 'B' });
+  assert.equal(w.last(back, 'error').code, 'no-room');
+  // A lobby that does start has no such clock running through the round.
+  const w2 = world();
+  const c = join(w2, 1, 'C', true);
+  join(w2, 2, 'D');
+  w2.after(LOBBY_MS - 5000);
+  w2.say(c, { t: 'start' });
+  assert.equal(w2.room.timers.lobby, null, 'started: the lobby clock stops');
+}
+{
+  // When the kept leaderboard goes, the room says so before closing.
+  const w = world();
+  const a = join(w, 1, 'A', true);
+  const b = join(w, 2, 'B');
+  w.say(a, { t: 'start' });
+  w.after(COUNTDOWN_MS + ROUND_MS + BELL_GRACE_MS + 100);
+  assert.equal(w.state(a).phase, 'results');
+  w.after(RESULTS_KEEP_MS + 100);
+  for (const c of [a, b]) {
+    assert.equal(w.last(c, 'error').code, 'ended', 'told the room has ended');
+    assert.ok(w.closed.has(c));
+  }
 }
 
 console.log('snake party room: all checks passed');

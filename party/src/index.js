@@ -1,7 +1,10 @@
 // The Snake party Worker: routes /parties/snake-party/<room> to that room's
 // Durable Object (server.js), after a few checks:
-//   - browsers may only connect from the site itself (ALLOWED_ORIGINS), so
-//     another page can't open rooms in a visitor's name
+//   - only the site's own pages may connect (ALLOWED_ORIGINS): another page
+//     can't open rooms in a visitor's name, and a connection with no Origin
+//     at all (a script, not a browser) is turned away. A script can still
+//     forge the header; the per-address cap, the room's own limits (room.js)
+//     and the Cloudflare rate-limiting rule (README) are what hold it back.
 //   - room codes are what the site makes (ROOM_CODE)
 //   - one address can't open connections without end (a per-minute cap)
 
@@ -33,8 +36,7 @@ export default {
     const response = await routePartykitRequest(request, env, {
       onBeforeConnect(req, { name }) {
         const origin = req.headers.get('Origin');
-        // Browsers always send Origin; only the site's own pages may connect.
-        if (origin && !allowed.includes(origin)) return new Response('Forbidden', { status: 403 });
+        if (!origin || !allowed.includes(origin)) return new Response('Forbidden', { status: 403 });
         if (!ROOM_CODE.test(name)) return new Response('No such room', { status: 404 });
         if (tooMany(req.headers.get('CF-Connecting-IP') ?? 'local')) return new Response('Too many connections', { status: 429 });
         return undefined;
