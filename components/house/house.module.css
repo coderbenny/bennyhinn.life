@@ -200,6 +200,30 @@
   background: rgba(20, 22, 30, 0.8);
 }
 
+.keyButtonMain {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #fff4e6;
+  border-color: rgba(255, 176, 102, 0.75);
+  background: rgba(70, 40, 20, 0.6);
+}
+
+.keyButtonMain:hover,
+.keyButtonMain:focus-visible {
+  border-color: #ffb066;
+  background: rgba(90, 50, 22, 0.8);
+}
+
+.keyIcon {
+  width: 1.05em;
+  height: 0.75em;
+  fill: none;
+  stroke: #ffb066;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
 @keyframes houseFade {
   from {
     opacity: 0;

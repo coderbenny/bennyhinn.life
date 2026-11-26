@@ -461,14 +461,18 @@ export default function House({ onReady }) {
 
       {outside && !touched && !letterOpen && (
         <p className={styles.hint}>
-          Open the <strong>mailbox</strong> to leave a note, or the <strong>door</strong> to come in.
+          <strong>Write to me</strong> at the mailbox, or open the <strong>door</strong> to come in.
         </p>
       )}
 
       {outside && !letterOpen && (
         <div className={styles.keys}>
-          <button ref={mailboxButton} type="button" className={styles.keyButton} onClick={openLetter}>
-            Mailbox
+          <button ref={mailboxButton} type="button" className={`${styles.keyButton} ${styles.keyButtonMain}`} onClick={openLetter}>
+            <svg className={styles.keyIcon} viewBox="0 0 20 14" aria-hidden="true">
+              <rect x="1" y="1" width="18" height="12" rx="1.5" />
+              <path d="M1.5 1.5 10 8l8.5-6.5" />
+            </svg>
+            Write to me
           </button>
           <button type="button" className={styles.keyButton} onClick={() => go('entry')}>
             Come in
