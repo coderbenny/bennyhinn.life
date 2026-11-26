@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { EMAIL } from '@/constants/contact';
@@ -85,13 +85,19 @@ function plateTexture() {
   return tex;
 }
 
+// On the canvas, like the other things you can use: the house layer's own
+// cursor (house.module.css) would hide one set on the page body.
 function useHoverCursor(hovered) {
+  const { gl } = useThree();
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : '';
+    if (!hovered) return undefined;
+    const el = gl.domElement;
+    const before = el.style.cursor;
+    el.style.cursor = 'pointer';
     return () => {
-      document.body.style.cursor = '';
+      el.style.cursor = before;
     };
-  }, [hovered]);
+  }, [gl, hovered]);
 }
 
 /**

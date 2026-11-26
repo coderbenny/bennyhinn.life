@@ -5,6 +5,14 @@
   z-index: 1000;
   background: #1b1f2e;
   touch-action: none;
+  /* The site hides the system cursor for its glow (globals.css), but the glow
+     sits under this layer: the house shows the real cursor everywhere. The
+     canvas sets its own (grab, pointer) over things you can use. */
+  cursor: default;
+}
+
+.root :is(button, a, [role='button']):not(:disabled) {
+  cursor: pointer;
 }
 
 .root :global(.house-canvas) {
